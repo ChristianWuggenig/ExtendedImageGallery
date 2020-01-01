@@ -43,4 +43,4 @@ db.initDb.then(() => {
     app.listen(cfg.server.port, () => {
         console.log("Listening on port " + cfg.server.port + "...");
     });
-}, () => {console.log("Failed to connect to DB!")});
+}, (error) => {console.log("Failed to connect to DB, message is: " + error);});
