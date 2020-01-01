@@ -1,0 +1,20 @@
+<div *ngIf="galleryService.images.length">
+  <div class="gallery" *ngIf="!showBigImg">
+    <div class="gallery" *ngFor='let image of galleryService.images'>
+      <img src={{image.data_small}} attr.data-large={{image.data_big}} attr.data-dbid={{image.id}} alt={{image.desc}} (click)="toggleBigImage($event,true)"/>
+    </div>
+  </div>
+</div>
+<div id="displayDIV" *ngIf="showBigImg">
+    <img class="bigIMG" src={{bigImgSrc}} attr.data-dbid={{bigImgId}} (click)="toggleBigImage($event,false)"/>
+    <div>
+      <input class="desc" type="text" [(ngModel)]="desc">
+    </div>
+    <div>
+      <button (click)="jump(-1)">prev</button>
+      <button (click)="togglePlay()">play/pause</button>
+      <button (click)="toggleBigImage($event,false)">exit</button>
+      <button (click)="updateDescription()">update</button>
+      <button (click)="jump(+1)">next</button>
+    </div>
+</div>
