@@ -13,10 +13,11 @@ const httpOptions = {
 export class SiteService {
 
   constructor(private http: HttpClient) { }
-  login(loginUrl:any, body:JSON){
+
+  login(loginUrl: any, body: { pass: string }) {
     return this.http.post(loginUrl, body, httpOptions)
     .pipe(
-      catchError(this.handleError)  
+      catchError(this.handleError)
     );
   }
   private handleError(error: HttpErrorResponse) {
@@ -29,5 +30,5 @@ export class SiteService {
     }
     return throwError(
       'Something bad happened; please try again later.');
-  };
+  }
 }
