@@ -49,29 +49,36 @@ router.get('/s', (req, res) => {
         db.serialize(function () {
             let sql;
             if(req.query.searchString.startsWith("#")) {
-                sql = db.prepare("select i.id, i.url_big, i.url_small, i.description from images i join images_tags it on i.id = it.image_id join tags t on t.id = it.tag_id where t.name like ? || '%'");
+                sql = db.prepare("select i.id, i.url_big, i.url_small, i.description " +
+                    "from images i " +
+                    "join images_tags it on i.id = it.image_id " +
+                    "join tags t on t.id = it.tag_id " +
+                    "where t.name like ? || '%'");
             } else {
-                sql = db.prepare("select id, url_big, url_small, description from images where description like '%' || ? || '%'");
+                sql = db.prepare("select id, url_big, url_small, description " +
+                    "from images " +
+                    "where description like '%' || ? || '%'");
             }
 
             let images = {};
             sql.each(req.query.searchString, function (error, row) {
-
                 images[row.id] = {
                     "dataSmall": row.url_small,
                     "dataBig": row.url_big,
                     "description": row.description
                 }
-
-                res.json(images);
-                res.status(200);
-                res.send();
-
             }, function (error, count) {
                 sql.finalize();
+
+                if(Object.entries(images).length === 0 && images.constructor === Object) { //check if object is "empty"
+                    res.status(404);
+                } else {
+                    res.json(images);
+                    res.status(200);
+                }
+
+                res.send();
             });
-
-
         });
     }
 });
