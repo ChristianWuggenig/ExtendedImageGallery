@@ -2,85 +2,108 @@ const express = require('express');
 const router = express.Router();
 const checkAuth = require('../check_auth');
 const getDb = require("../db").getDb;
+let db = getDb();
 
-router.get('/', checkAuth, (req, res) => {
-    let db = getDb();
-    /*
-    * EX03
-    * 
-    * da wir eine DB-Anfrage (select statement) machen müssen, die etwas länger ist, schreiben wir sie
-    * in eine extra Variable. Wir wollen id, url_big, url_small und description von images haben, wobei die user-id einen bestimmten
-    * Wert haben muss, den wir mittels 'checkAuth' an req gebunden haben.
-    */
-    let sql = "SELECT i.id, i.url_big, i.url_small, i.description FROM images i, users_images ui where ui.user_id =" + req.user_id + " and i.id = ui.image_id";
-    db.query(sql, function (err, result, fields) {
-        if (err) {
-            res.status(400).json({ message: "an error occured" });
-        }
-        if (result.length == 0) {
-            /*
-            * Ohne Rückgabewerte auch keine Daten --> Fehlercode 401
-            */
-            res.status(401).json({ message: "no results" });
-        }
-        /*
-        * sonst erstellen wir ein leeres Array, das wir mit den Daten befüllen und danach in JSON umwandeln.
-        */
-        let jsonImgs = {};
-        for (let i = 0; i < result.length; i++) {
-            jsonImgs[result[i].id] = {
-                "dataSmall": result[i].url_small,
-                "dataBig": result[i].url_big,
-                "description": result[i].description
-            };
-        }
-        jsonImgs = JSON.stringify(jsonImgs);
-        /*
-        * zum Schluss geben wir noch 200 (=OK) als status gemeinsam mit dem json zurück
-        */
-        res.status(200).json(jsonImgs);
-    });
+/**
+ * show all images (=landing page)
+ */
+router.get('/', (req, res) => {
+    let sql = "select id, url_big, url_small, description " +
+        "from images";
+
+    executeStandardQuery(sql, res);
 });
 
+/**
+ * show a user's personal dashboard (first page shown when logged in)
+ */
+router.get('/dashboard', checkAuth, (req, res) => {
+    let sql = "select i.id, i.url_big, i.url_small, i.description " +
+        "from images i, users_images ui " +
+        "where ui.user_id =% and i.id = ui.image_id";
+
+    executePreparedQuery(sql, req.user_id, res);
+});
+
+/**
+ * search for images by description parts or tags
+ */
 router.get('/s', (req, res) => {
     if(req.query.searchString !== undefined) {
-        let db = getDb();
+        let sql;
+        if(req.query.searchString.startsWith("#")) {
+            sql = "select i.id, i.url_big, i.url_small, i.description " +
+                "from images i " +
+                "join images_tags it on i.id = it.image_id " +
+                "join tags t on t.id = it.tag_id " +
+                "where t.name like ? || '%'";
+        } else {
+            sql = "select id, url_big, url_small, description " +
+                "from images " +
+                "where description like '%' || ? || '%'";
+        }
 
-        db.serialize(function () {
-            let sql;
-            if(req.query.searchString.startsWith("#")) {
-                sql = db.prepare("select i.id, i.url_big, i.url_small, i.description " +
-                    "from images i " +
-                    "join images_tags it on i.id = it.image_id " +
-                    "join tags t on t.id = it.tag_id " +
-                    "where t.name like ? || '%'");
-            } else {
-                sql = db.prepare("select id, url_big, url_small, description " +
-                    "from images " +
-                    "where description like '%' || ? || '%'");
-            }
-
-            let images = {};
-            sql.each(req.query.searchString, function (error, row) {
-                images[row.id] = {
-                    "dataSmall": row.url_small,
-                    "dataBig": row.url_big,
-                    "description": row.description
-                }
-            }, function (error, count) {
-                sql.finalize();
-
-                if(Object.entries(images).length === 0 && images.constructor === Object) { //check if object is "empty"
-                    res.status(404);
-                } else {
-                    res.json(images);
-                    res.status(200);
-                }
-
-                res.send();
-            });
-        });
+        executePreparedQuery(sql, req.query.searchString, res);
     }
 });
+
+/**
+ * execute a sql-query with a prepared statement, directly returning a json-file with images to the client
+ * @param sql: the sql-query as string
+ * @param preparedParameter: the parameter, which is used in the prepared statement
+ * @param res: the response object
+ */
+function executePreparedQuery(sql, preparedParameter, res) {
+    db.serialize(function () {
+        sql = db.prepare(sql);
+        let images = {};
+        sql.each(preparedParameter, function (error, row) {
+            images[row.id] = {
+                "dataSmall": row.url_small,
+                "dataBig": row.url_big,
+                "description": row.description
+            }
+        }, function (error, count) {
+            sql.finalize();
+
+            if (Object.entries(images).length === 0 && images.constructor === Object) { //check if object is "empty"
+                res.status(404);
+            } else {
+                res.json(JSON.stringify(images));
+                res.status(200);
+            }
+
+            res.send();
+        });
+    });
+}
+
+/**
+ * execute a standard query with no parameters
+ * @param sql the sql-query
+ * @param res the response-object
+ */
+function executeStandardQuery(sql, res) {
+    let images = {};
+    db.all(sql, [], (error, rows) => {
+        if (error) {
+            console.log(error);
+        }
+        rows.forEach((row) => {
+            images[row.id] = {
+                "dataSmall": row.url_small,
+                "dataBig": row.url_big,
+                "description": row.description
+            }
+        });
+
+        if (Object.entries(images).length === 0 && images.constructor === Object) { //check if object is "empty"
+            res.status(404);
+        } else {
+            res.json(JSON.stringify(images));
+            res.status(200);
+        }
+    });
+}
 
 module.exports = router;

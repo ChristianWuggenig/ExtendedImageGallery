@@ -10,72 +10,88 @@ import { Image } from './image';
 })
 export class JsongalleryService {
   config = {
-    serverHost: "localhost",
+    serverHost: 'localhost',
     serverPort: 3000,
-    loginRoute: "login",
-    galleryRoute: "gallery",
-    imageRoute: "image",
-    localUserInfo: "wt18user",
+    loginRoute: 'login',
+    galleryRoute: 'gallery',
+    imageRoute: 'image',
+    localUserInfo: 'wt18user',
     cookieExpiry: 3600000,
     standardGreeting: `Hello guest!`
-  }
+  };
   images: Image[] = [];
-  jsonImages:JSON;
-  constructor(private http: HttpClient,private cookie: CookieService) { }
-  load():void{
+  jsonImages: JSON;
+  constructor(private http: HttpClient, private cookie: CookieService) { }
+  load(): void {
     const galleryUrl = `http://${this.config.serverHost}:${this.config.serverPort}/${this.config.galleryRoute}`;
-    if(this.cookie){
-      let cookieData = JSON.parse(this.cookie.get(this.config.localUserInfo));
-      let httpOptions = {headers: new HttpHeaders({
-          'Content-Type': 'application/json',
-          'Authorization': cookieData.token + ''
-        })
-      };
-      this.http.get(galleryUrl,httpOptions)
+    this.http.get(galleryUrl)
       .pipe(
-        catchError(this.handleError)  
-      ).subscribe((data:any) => {
-        let jsonData = JSON.parse(data);
+        catchError(this.handleError)
+      )
+      .subscribe((data: any) => {
+        const jsonData = JSON.parse(data);
         Object.keys(jsonData).forEach(
           (key) => {
-            let image = new Image(key,
+            const image = new Image(key,
               `http://${this.config.serverHost}:${this.config.serverPort}/${jsonData[key].dataBig}`,
               `http://${this.config.serverHost}:${this.config.serverPort}/${jsonData[key].dataSmall}`,
-              jsonData[key].description)
+              jsonData[key].description);
             this.images.push(image);
           }
         );
       });
-    }
-  }
-  updateDesc(imgId:string, desc:string){
-    let imageUrl = `http://${this.config.serverHost}:${this.config.serverPort}/${this.config.imageRoute}/${imgId}`;
-    if(this.cookie){
-      let cookieData = JSON.parse(this.cookie.get(this.config.localUserInfo));
-      let httpOptions = {headers: new HttpHeaders({
+    /* if (this.cookie) {
+      const cookieData = JSON.parse(this.cookie.get(this.config.localUserInfo));
+      const httpOptions = {headers: new HttpHeaders({
           'Content-Type': 'application/json',
           'Authorization': cookieData.token + ''
         })
       };
-      let jsonData = {"description":desc};
-      return this.http.patch(imageUrl, JSON.stringify(jsonData),httpOptions)
+      this.http.get(galleryUrl, httpOptions)
+      .pipe(
+        catchError(this.handleError)
+      ).subscribe((data: any) => {
+        const jsonData = JSON.parse(data);
+        Object.keys(jsonData).forEach(
+          (key) => {
+            const image = new Image(key,
+              `http://${this.config.serverHost}:${this.config.serverPort}/${jsonData[key].dataBig}`,
+              `http://${this.config.serverHost}:${this.config.serverPort}/${jsonData[key].dataSmall}`,
+              jsonData[key].description);
+            this.images.push(image);
+          }
+        );
+      });
+     }*/
+  }
+  updateDesc(imgId: string, desc: string) {
+    const imageUrl = `http://${this.config.serverHost}:${this.config.serverPort}/${this.config.imageRoute}/${imgId}`;
+    if (this.cookie) {
+      const cookieData = JSON.parse(this.cookie.get(this.config.localUserInfo));
+      const httpOptions = {headers: new HttpHeaders({
+          'Content-Type': 'application/json',
+          'Authorization': cookieData.token + ''
+        })
+      };
+      const jsonData = {'description': desc};
+      return this.http.patch(imageUrl, JSON.stringify(jsonData), httpOptions)
       .pipe(catchError(this.handleError)).subscribe(
-        (data:any) => {
-          if(data.message == "successful description update!"){
+        (data: any) => {
+          if (data.message === 'successful description update!') {
             this.images[this.getImgIdx(imgId)].desc = desc;
           }
         }
       );
     }
   }
-  getImgIdx(id:string):number{
-    for(let i = 0; i < this.images.length; i++){
-      if(id == this.images[i].id){
+  getImgIdx(id: string): number {
+    for (let i = 0; i < this.images.length; i++) {
+      if (id === this.images[i].id) {
         return i;
       }
     }
   }
-  deinit():void{
+  deinit(): void {
     console.log('Bye bye :p');
     this.images = [];
   }
@@ -89,5 +105,5 @@ export class JsongalleryService {
     }
     return throwError(
       'Something bad happened; please try again later.');
-  };
+  }
 }
