@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
 import { JsongalleryService } from '../jsongallery.service';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'app-jsongallery',
@@ -19,6 +20,7 @@ export class JsongalleryComponent implements OnInit {
   ngOnInit() {
     this.galleryService.load();
   }
+
   toggleBigImage(event: any, value: boolean): void {
     this.showBigImg = value;
     if (this.showBigImg) {

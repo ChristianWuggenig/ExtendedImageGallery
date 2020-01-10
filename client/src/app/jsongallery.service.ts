@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
-import { throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import {Observable, of, throwError} from 'rxjs';
+import {catchError, tap} from 'rxjs/operators';
 import { CookieService } from 'ngx-cookie-service';
 import { Image } from './image';
 
@@ -64,6 +64,32 @@ export class JsongalleryService {
       });
      }*/
   }
+
+  search(searchString: string): void {
+    if (searchString !== '') {
+    this.http.get(`http://${this.config.serverHost}:${this.config.serverPort}/${this.config.galleryRoute}/s?searchString=${searchString}`)
+      .pipe(
+        catchError(this.handleError)
+      )
+      .subscribe((data: any) => {
+        const jsonData = JSON.parse(data);
+        this.images = [];
+        Object.keys(jsonData).forEach(
+          (key) => {
+            const image = new Image(key,
+              `http://${this.config.serverHost}:${this.config.serverPort}/${jsonData[key].dataBig}`,
+              `http://${this.config.serverHost}:${this.config.serverPort}/${jsonData[key].dataSmall}`,
+              jsonData[key].description);
+            this.images.push(image);
+          }
+        );
+      });
+    } else {
+      this.images = [];
+      this.load();
+    }
+  }
+
   updateDesc(imgId: string, desc: string) {
     const imageUrl = `http://${this.config.serverHost}:${this.config.serverPort}/${this.config.imageRoute}/${imgId}`;
     if (this.cookie) {

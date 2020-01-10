@@ -66,14 +66,8 @@ function executePreparedQuery(sql, preparedParameter, res) {
         }, function (error, count) {
             sql.finalize();
 
-            if (Object.entries(images).length === 0 && images.constructor === Object) { //check if object is "empty"
-                res.status(404);
-            } else {
-                res.json(JSON.stringify(images));
-                res.status(200);
-            }
-
-            res.send();
+            res.json(JSON.stringify(images));
+            res.status(200);
         });
     });
 }
@@ -97,12 +91,8 @@ function executeStandardQuery(sql, res) {
             }
         });
 
-        if (Object.entries(images).length === 0 && images.constructor === Object) { //check if object is "empty"
-            res.status(404);
-        } else {
-            res.json(JSON.stringify(images));
-            res.status(200);
-        }
+        res.json(JSON.stringify(images));
+        res.status(200);
     });
 }
 

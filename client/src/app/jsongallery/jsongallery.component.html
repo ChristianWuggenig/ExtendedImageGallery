@@ -38,7 +38,7 @@
     <!-- Search form -->
     <form class="form-inline waves-light" mdbWavesEffect>
       <div class="md-form my-0">
-        <input class="form-control mr-sm-2" type="text" placeholder="Search">
+        <input #searchBox class="form-control mr-sm-2" type="text" placeholder="Search" id="searchBox" (input)="galleryService.search(searchBox.value)">
       </div>
     </form>
   </links>
@@ -47,7 +47,7 @@
 </mdb-navbar>
 <!--/.Navbar-->
 
-<div *ngIf="galleryService.images.length">
+<div>
   <div class="gallery" *ngIf="!showBigImg">
     <div class="gallery" *ngFor='let image of galleryService.images'>
       <img src={{image.data_small}} attr.data-large={{image.data_big}} attr.data-dbid={{image.id}} alt={{image.desc}} (click)="toggleBigImage($event,true)"/>
