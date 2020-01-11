@@ -29,21 +29,24 @@ router.get('/dashboard', checkAuth, (req, res) => {
  * search for images by description parts or tags
  */
 router.get('/s', (req, res) => {
-    if(req.query.searchString !== undefined) {
+    let searchString = req.query.searchString;
+    if(searchString !== undefined) {
         let sql;
-        if(req.query.searchString.startsWith("#")) {
+        if(searchString.startsWith("@") && searchString.length > 1) {
+            searchString = searchString.substr(1);
             sql = "select i.id, i.url_big, i.url_small, i.description " +
                 "from images i " +
                 "join images_tags it on i.id = it.image_id " +
                 "join tags t on t.id = it.tag_id " +
                 "where t.name like ? || '%'";
-        } else {
+        } else if (!searchString.startsWith("@")){
             sql = "select id, url_big, url_small, description " +
                 "from images " +
                 "where description like '%' || ? || '%'";
         }
 
-        executePreparedQuery(sql, req.query.searchString, res);
+        if(sql !== undefined)
+            executePreparedQuery(sql, searchString, res);
     }
 });
 

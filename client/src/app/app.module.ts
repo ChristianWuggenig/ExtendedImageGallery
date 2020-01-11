@@ -13,6 +13,7 @@ import { SiteComponent } from './site/site.component';
 
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
+import { NavbarComponent } from './navbar/navbar.component';
 
 @NgModule({
   imports: [
@@ -27,7 +28,8 @@ import { MDBBootstrapModule } from 'angular-bootstrap-md';
   declarations: [
     AppComponent,
     JsongalleryComponent,
-    SiteComponent
+    SiteComponent,
+    NavbarComponent
   ],
   bootstrap: [ AppComponent ]
 })

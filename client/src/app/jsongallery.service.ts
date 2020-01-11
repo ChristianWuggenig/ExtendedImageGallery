@@ -14,6 +14,8 @@ export class JsongalleryService {
     serverPort: 3000,
     loginRoute: 'login',
     galleryRoute: 'gallery',
+    searchRoute: 's',
+    searchParameter: 'searchString',
     imageRoute: 'image',
     localUserInfo: 'wt18user',
     cookieExpiry: 3600000,
@@ -67,7 +69,11 @@ export class JsongalleryService {
 
   search(searchString: string): void {
     if (searchString !== '') {
-    this.http.get(`http://${this.config.serverHost}:${this.config.serverPort}/${this.config.galleryRoute}/s?searchString=${searchString}`)
+      if (searchString.startsWith('#')) {
+        searchString = '@' + searchString.substr(1); // use a different symbol than #, because http would recognize it as fragment
+      }
+    this.http.get(`http://${this.config.serverHost}:${this.config.serverPort}/${this.config.galleryRoute}/` +
+      `${this.config.searchRoute}?${this.config.searchParameter}=${searchString}`)
       .pipe(
         catchError(this.handleError)
       )
@@ -84,7 +90,7 @@ export class JsongalleryService {
           }
         );
       });
-    } else {
+    } else { // if the searchString is empty, reload the whole gallery
       this.images = [];
       this.load();
     }
