@@ -1,4 +1,4 @@
-<div *ngIf="galleryService.images.length">
+<div>
   <div class="gallery" *ngIf="!showBigImg">
     <div class="gallery" *ngFor='let image of galleryService.images'>
       <img src={{image.data_small}} attr.data-large={{image.data_big}} attr.data-dbid={{image.id}} alt={{image.desc}} (click)="toggleBigImage($event,true)"/>
