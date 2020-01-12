@@ -6,15 +6,20 @@
   </div>
 </div>
 <div id="displayDIV" *ngIf="showBigImg">
+  <div id="rowFlexDiv">
     <img class="bigIMG" src={{bigImgSrc}} attr.data-dbid={{bigImgId}} (click)="toggleBigImage($event,false)"/>
-    <div>
-      <input class="desc" type="text" [(ngModel)]="desc">
+    <div id="information">
+      <p class="desc">{{desc}}</p>
+      <p class="tags"></p>
+      <h3>Rating:</h3>
+
     </div>
-    <div>
-      <button (click)="jump(-1)">prev</button>
-      <button (click)="togglePlay()">play/pause</button>
-      <button (click)="toggleBigImage($event,false)">exit</button>
-      <button (click)="updateDescription()">update</button>
-      <button (click)="jump(+1)">next</button>
+  </div>
+    <div id="buttons">
+      <button mdbBtn color="info" mdbWavesEffect (click)="jump(-1)">prev</button>
+      <button mdbBtn color="info" mdbWavesEffect (click)="togglePlay()">play/pause</button>
+      <button mdbBtn color="info" mdbWavesEffect (click)="toggleBigImage($event,false)">exit</button>
+      <button mdbBtn color="info" mdbWavesEffect (click)="updateDescription()">update</button>
+      <button mdbBtn color="info" mdbWavesEffect (click)="jump(+1)">next</button>
     </div>
 </div>

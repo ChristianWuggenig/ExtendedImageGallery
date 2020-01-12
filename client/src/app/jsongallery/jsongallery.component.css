@@ -1,11 +1,21 @@
 #displayDIV {
 	background-color:silver;
-	width:100vw;
 	height:100vh;
-	position:absolute;
-	text-align:center;
-	top:0;
-	left:0
+	display: flex;
+  flex-direction: column;
+}
+
+#rowFlexDiv {
+  display: flex;
+  flex-direction: row;
+}
+
+#information {
+  display: flex;
+  flex-direction: column;
+  margin-right: 3%;
+  margin-left: 1%;
+  margin-top: 0.5%;
 }
 
 .gallery > img {
@@ -16,13 +26,25 @@
     flex-wrap: wrap;
 }
 
-
-#displayDIV img.bigIMG {
-	margin-top: 20px;
-	height: calc(100% - 100px);
+#buttons {
+  margin-left: 0.5%;
 }
 
-#displayDIV .desc {
-	width: 30%;
-	text-align: center;
+#displayDIV img.bigIMG {
+	margin-top: 1%;
+  margin-left: 1%;
+  width: 80vw;
+  max-width: 1000px;
+}
+
+@media(max-width: 600px) {
+  #rowFlexDiv {
+    flex-direction: column;
+    margin-left: 1%;
+  }
+
+  #displayDIV img.bigIMG {
+    width: 93vw;
+    margin-right: 3%;
+  }
 }

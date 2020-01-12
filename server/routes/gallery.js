@@ -9,7 +9,7 @@ let db = getDb();
  */
 router.get('/', (req, res) => {
     let sql = "select id, url_big, url_small, description " +
-        "from images";
+        "from image";
 
     executeStandardQuery(sql, res);
 });
@@ -19,7 +19,7 @@ router.get('/', (req, res) => {
  */
 router.get('/dashboard', checkAuth, (req, res) => {
     let sql = "select i.id, i.url_big, i.url_small, i.description " +
-        "from images i, users_images ui " +
+        "from image i, users_images ui " +
         "where ui.user_id =% and i.id = ui.image_id";
 
     executePreparedQuery(sql, req.user_id, res);
@@ -35,13 +35,13 @@ router.get('/s', (req, res) => {
         if(searchString.startsWith("@") && searchString.length > 1) {
             searchString = searchString.substr(1);
             sql = "select i.id, i.url_big, i.url_small, i.description " +
-                "from images i " +
+                "from image i " +
                 "join images_tags it on i.id = it.image_id " +
-                "join tags t on t.id = it.tag_id " +
+                "join tag t on t.id = it.tag_id " +
                 "where t.name like ? || '%'";
         } else if (!searchString.startsWith("@")){
             sql = "select id, url_big, url_small, description " +
-                "from images " +
+                "from image " +
                 "where description like '%' || ? || '%'";
         }
 
