@@ -1,16 +1,29 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import {SiteComponent} from './site/site.component';
-import {JsongalleryComponent} from './jsongallery/jsongallery.component';
+import { JsongalleryComponent } from './jsongallery/jsongallery.component';
+import { ImageuploadComponent } from './imageupload/imageupload.component';
+import { MyfavoritesComponent } from './myfavorites/myfavorites.component';
+import { LoginComponent } from './login/login.component';
+import { AuthGuard } from './auth.guard';
 
 const routes: Routes = [
   {
     path: 'login',
-    component: SiteComponent
+    component: LoginComponent
   },
   {
     path: 'gallery',
     component: JsongalleryComponent
+  },
+  {
+    path: 'upload',
+    component: ImageuploadComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'favorites',
+    component: MyfavoritesComponent,
+    canActivate: [AuthGuard]
   }
 ];
 

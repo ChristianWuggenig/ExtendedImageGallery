@@ -64,7 +64,7 @@ function check_DB_for_login_data(email, pass, res) {
                 "message": "login successful",
                 "first_name": resultUser.first_name,
                 "last_name": resultUser.last_name,
-                "token": token
+                "token": {token: token}
             });
             logger.debug('response with JWT sent');
             stmt.finalize();
