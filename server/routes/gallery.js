@@ -20,7 +20,7 @@ router.get('/', (req, res) => {
 router.get('/dashboard', checkAuth, (req, res) => {
     let sql = "select i.id, i.url_big, i.url_small, i.description " +
         "from image i, users_images ui " +
-        "where ui.user_id =% and i.id = ui.image_id";
+        "where ui.user_id = ? and i.id = ui.image_id";
 
     executePreparedQuery(sql, req.user_id, res);
 });

@@ -1,10 +1,11 @@
 {
   "name": "nodejs_gallery",
   "version": "1.0.0",
-  "description": "",
+  "description": "Server for the most awesome app ever: Extended Image Gallery.",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
   },
   "author": "",
   "license": "ISC",
@@ -13,6 +14,8 @@
     "cors": "^2.8.5",
     "express": "^4.16.4",
     "jsonwebtoken": "^8.4.0",
+    "log4js": "^6.1.0",
+    "morgan": "^1.9.1",
     "nodemon": "^2.0.2",
     "number": "0.0.1",
     "random": "^2.0.12",
