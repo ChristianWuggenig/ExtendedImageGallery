@@ -14,6 +14,7 @@ import { SiteComponent } from './site/site.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { NavbarComponent } from './navbar/navbar.component';
+import {NavbarComunicationService} from "./navbarComunication.service";
 
 @NgModule({
   imports: [
@@ -24,7 +25,7 @@ import { NavbarComponent } from './navbar/navbar.component';
     ReactiveFormsModule,
     NgbModule,
     MDBBootstrapModule.forRoot()
-  ], providers: [CookieService],
+  ], providers: [CookieService, NavbarComunicationService],
   declarations: [
     AppComponent,
     JsongalleryComponent,

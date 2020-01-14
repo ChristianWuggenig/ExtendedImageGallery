@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import {SiteComponent} from './site/site.component';
-import {JsongalleryComponent} from "./jsongallery/jsongallery.component";
+import {JsongalleryComponent} from './jsongallery/jsongallery.component';
 
 const routes: Routes = [
   {

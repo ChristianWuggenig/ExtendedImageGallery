@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import {JsongalleryService} from '../jsongallery.service';
+import {NavbarComunicationService} from '../navbarComunication.service';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -7,9 +9,14 @@ import {JsongalleryService} from '../jsongallery.service';
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
-  private username: string;
+  @Input('navbar_username') private username: string;
+  private subscription: Subscription;
 
-  constructor(public galleryService: JsongalleryService) { }
+  constructor(public galleryService: JsongalleryService, public navbarComunicationService: NavbarComunicationService) {
+    this.subscription = this.navbarComunicationService.inputEvents.subscribe((newValue) => {
+      this.username = newValue;
+    });
+  }
 
   ngOnInit() {
     this.username = 'Guest';
