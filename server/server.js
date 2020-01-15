@@ -3,9 +3,15 @@ let express = require('express');
 let cors = require('cors')
 const app = express();
 app.use(express.static('public')); // host public folder
-app.use(cors()); // allow all origins -> Access-Control-Allow-Origin: *
+app.options('*', cors()); // Enable preflight HTTP options
+let corsOptions = {
+    allowedHeaders: ['ContentType', 'Authorization']
+}
+app.use(cors(corsOptions)); // allow all origins -> Access-Control-Allow-Origin: *
 const db = require("./db");
 
+let morgan = require('morgan');
+app.use(morgan('common'));//morgan('dev'));
 
 let bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
