@@ -33,7 +33,7 @@ export class NavbarComponent implements OnInit {
     this.authService.loggedIn = false;
     this.authService.loginMessage = '';
     this.authService.greeting = this.authService.config.standardGreeting;
-    this.galleryService.deinit();
+    // this.galleryService.deinit();
   }
   deleteCookie(): void {
     this.cookie.delete(this.authService.config.localUserInfo);

@@ -51,4 +51,10 @@ export class AuthService {
   isLoggedIn(): boolean {
     return this.cookie.check(this.config.localUserInfo);
   }
+  getToken(): string {
+    if (this.cookie.check(this.config.localUserInfo)) {
+      let cookie = this.cookie.get(this.config.localUserInfo);
+      return JSON.parse(cookie as string).token;
+    } else { return ''; }
+  }
 }

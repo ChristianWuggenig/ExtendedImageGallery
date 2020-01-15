@@ -1,8 +1,10 @@
+<!--
 <div>
   <h1>{{greeting}}</h1>
   <button *ngIf="loggedIn" (click)="logout()">Logout</button>
 </div>
 <div *ngIf="!loggedIn">
+-->
   <form [formGroup]="loginForm">
     <!-- this div is just for debugging purpose -->
     <div id="displayFormValues">
@@ -16,4 +18,6 @@
     <button (click)="login()" routerLink="/gallery" routerLinkActive="active">Login</button>
     <div id="loginMessage">{{loginMessage}}</div>
   </form>
+<!--
 </div>
+-->

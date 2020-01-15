@@ -1,7 +1,7 @@
 import { NgModule, InjectionToken } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CookieService } from 'ngx-cookie-service';
 
@@ -19,6 +19,7 @@ import { MyfavoritesComponent } from './myfavorites/myfavorites.component';
 import { ImageuploadComponent } from './imageupload/imageupload.component';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
+import { TokeninterceptorService } from './tokeninterceptor.service';
 
 @NgModule({
   imports: [
@@ -29,8 +30,16 @@ import { AuthGuard } from './auth.guard';
     ReactiveFormsModule,
     NgbModule,
     MDBBootstrapModule.forRoot()
-  ], providers: [CookieService, NavbarComunicationService, AuthService, AuthGuard],
-  declarations: [
+  ], providers: [CookieService,
+    NavbarComunicationService,
+    AuthService,
+    AuthGuard,
+    {
+      provide: HTTP_INTERCEPTORS,
+      multi: true,
+      useClass: TokeninterceptorService
+    }
+  ], declarations: [
     AppComponent,
     JsongalleryComponent,
     NavbarComponent,
