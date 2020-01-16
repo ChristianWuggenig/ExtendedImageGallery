@@ -49,23 +49,18 @@ export class LoginComponent implements OnInit {
     const data = {email: this.email, pass: this.password};
     this.authService.login(loginUrl, data).subscribe((serverLoginResponse: any) => {
       this.authService.greeting = `Hello ${serverLoginResponse.first_name}`;
+      this.authService.username = serverLoginResponse.first_name;
       this.navbarCommunicationService.inputChanged(serverLoginResponse.first_name);
 
       console.log(serverLoginResponse.message);
       console.log(serverLoginResponse.token);
 
-      this.createCookie(serverLoginResponse.token);
+      this.authService.createCookie(serverLoginResponse.token);
       this.init();
       this.loginForm.reset();
     });
   }
-  createCookie(jsonData: JSON): void {
-    const now = new Date();
-    let time = now.getTime();
-    time += this.authService.config.cookieExpiry;
-    now.setTime(time);
-    this.cookie.set(this.authService.config.localUserInfo, JSON.stringify(jsonData), now);
-  }
+
   isValidInput(): Boolean {
     if (this.loginForm.valid) {
       this.email = this.loginForm.get('email').value;

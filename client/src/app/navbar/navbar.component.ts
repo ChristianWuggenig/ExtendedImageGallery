@@ -32,14 +32,11 @@ export class NavbarComponent implements OnInit {
   }
 
   logout(): void {
-    this.deleteCookie();
+    this.authService.deleteCookie();
     this.username = this.authService.config.standardUsername;
     this.authService.loggedIn = false;
     this.authService.loginMessage = '';
     this.authService.greeting = this.authService.config.standardGreeting;
     // this.galleryService.deinit();
-  }
-  deleteCookie(): void {
-    this.cookie.delete(this.authService.config.localUserInfo);
   }
 }
