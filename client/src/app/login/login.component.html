@@ -5,19 +5,22 @@
 </div>
 <div *ngIf="!loggedIn">
 -->
-  <form [formGroup]="loginForm">
-    <!-- this div is just for debugging purpose -->
-    <div id="displayFormValues">
-      Value: {{loginForm.value | json}}
-    </div>
-
+<form [formGroup]="loginForm">
+  <!-- this div is just for debugging purpose -->
+  <div id="displayFormValues">
+    Value: {{loginForm.value | json}}
+  </div>
+  <div  class="form-group">
     <label for="email"><b>Email</b></label>
-    <input #emailField id="email" type="email" formControlName="email" email="true" required>
+    <input #emailField id="email" class="form-control" type="email" formControlName="email" email="true" required>
+  </div>
+  <div class="form-group">
     <label for="password"><b>Password</b></label>
-    <input #passwordField id="password" type="password" formControlName="password" required>
-    <button (click)="login()">Login</button>
-    <div id="loginMessage">{{loginMessage}}</div>
-  </form>
+    <input #passwordField id="password" class="form-control" type="password" formControlName="password" required>
+  </div>
+  <button class="btn btn-primary" (click)="login()">Login</button>
+  <div id="loginMessage">{{loginMessage}}</div>
+</form>
 <!--
 </div>
 -->
