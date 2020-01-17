@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
-import { CookieService } from 'ngx-cookie-service';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import { Router } from '@angular/router';
 import { JsongalleryService } from '../jsongallery.service';
-import {NavbarComunicationService} from '../navbarComunication.service';
 import {AuthService} from '../auth.service';
+import {throwError} from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -22,8 +22,7 @@ export class LoginComponent implements OnInit {
     private http: HttpClient,
     private galleryService: JsongalleryService,
     private authService: AuthService,
-    private cookie: CookieService,
-    private navbarCommunicationService: NavbarComunicationService
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -49,23 +48,25 @@ export class LoginComponent implements OnInit {
     const data = {email: this.email, pass: this.password};
     this.authService.login(loginUrl, data).subscribe((serverLoginResponse: any) => {
       this.authService.greeting = `Hello ${serverLoginResponse.first_name}`;
-      this.navbarCommunicationService.inputChanged(serverLoginResponse.first_name);
+      this.authService.username = serverLoginResponse.first_name;
 
+      console.log('serverLoginResponse: ' + serverLoginResponse);
       console.log(serverLoginResponse.message);
       console.log(serverLoginResponse.token);
 
-      this.createCookie(serverLoginResponse.token);
+      this.authService.createCookie(serverLoginResponse);
       this.init();
       this.loginForm.reset();
-    });
+
+      let redirect = this.authService.redirecturl ? this.router.parseUrl(this.authService.redirecturl) : '/favorites';
+      this.router.navigateByUrl(redirect).then((res) => {
+        this.authService.redirecturl = null;
+      },(err) => {
+        throwError('Failed to redirect from login');
+      });
+     });
   }
-  createCookie(jsonData: JSON): void {
-    const now = new Date();
-    let time = now.getTime();
-    time += this.authService.config.cookieExpiry;
-    now.setTime(time);
-    this.cookie.set(this.authService.config.localUserInfo, JSON.stringify(jsonData), now);
-  }
+
   isValidInput(): Boolean {
     if (this.loginForm.valid) {
       this.email = this.loginForm.get('email').value;
@@ -75,9 +76,7 @@ export class LoginComponent implements OnInit {
     return false;
   }
   init(): void {
-    if (this.cookie) {
-      const cookieData = JSON.parse(this.cookie.get(this.authService.config.localUserInfo));
-      this.authService.greeting = `Hello ${cookieData.first_name} ${cookieData.last_name}!`;
+    if (this.authService.isLoggedIn()) {
       this.galleryService.load();
     } else {
       this.authService.loggedIn = false;
