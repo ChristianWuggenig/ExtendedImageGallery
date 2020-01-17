@@ -12,8 +12,13 @@ const routes: Routes = [
     component: LoginComponent
   },
   {
-    path: 'gallery',
+    path: '',
     component: JsongalleryComponent
+  },
+  {
+    path: 'gallery',
+    redirectTo: '',
+    pathMatch: 'full'
   },
   {
     path: 'upload',

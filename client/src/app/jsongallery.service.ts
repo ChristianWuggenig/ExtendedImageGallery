@@ -22,7 +22,6 @@ export class JsongalleryService {
     standardGreeting: `Hello guest!`
   };
   images: Image[] = [];
-  jsonImages: JSON;
   constructor(private http: HttpClient, private cookie: CookieService) { }
   load(): void {
     const galleryUrl = `http://${this.config.serverHost}:${this.config.serverPort}/${this.config.galleryRoute}`;
@@ -32,6 +31,7 @@ export class JsongalleryService {
       )
       .subscribe((data: any) => {
         const jsonData = JSON.parse(data);
+        this.images = [];
         Object.keys(jsonData).forEach(
           (key) => {
             const image = new Image(key,
