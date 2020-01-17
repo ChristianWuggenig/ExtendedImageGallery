@@ -15,7 +15,7 @@
     <input #emailField id="email" type="email" formControlName="email" email="true" required>
     <label for="password"><b>Password</b></label>
     <input #passwordField id="password" type="password" formControlName="password" required>
-    <button (click)="login()" routerLink="/gallery" routerLinkActive="active">Login</button>
+    <button (click)="login()">Login</button>
     <div id="loginMessage">{{loginMessage}}</div>
   </form>
 <!--

@@ -13,6 +13,7 @@ const httpOptions = {
 })
 export class AuthService {
 
+  redirecturl: string; // used for redirect after successful login
   username: string;
   loginMessage: string;
   greeting = 'Hello guest!';
@@ -49,24 +50,29 @@ export class AuthService {
     return throwError(
       'Something bad happened; please try again later.');
   }
+
   isLoggedIn(): boolean {
     return this.cookie.check(this.config.localUserInfo);
   }
+
   getToken(): string {
     if (this.cookie.check(this.config.localUserInfo)) {
       let cookie = this.cookie.get(this.config.localUserInfo);
       return JSON.parse(cookie as string).token.token;
     } else { return ''; }
   }
+
   getUsername(): string {
     if (this.cookie.check(this.config.localUserInfo)) {
       let cookie = this.cookie.get(this.config.localUserInfo);
       return JSON.parse(cookie as string).first_name;
     } else { return ''; }
   }
+
   deleteCookie(): void {
     this.cookie.delete(this.config.localUserInfo);
   }
+
   createCookie(jsonData: JSON): void {
     const now = new Date();
     let time = now.getTime();

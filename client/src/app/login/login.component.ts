@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import { Router } from '@angular/router';
 import { JsongalleryService } from '../jsongallery.service';
 import {AuthService} from '../auth.service';
+import {throwError} from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -19,7 +21,9 @@ export class LoginComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private galleryService: JsongalleryService,
-    private authService: AuthService) { }
+    private authService: AuthService,
+    private router: Router
+  ) { }
 
   ngOnInit() {
     this.loginForm = new FormGroup({
@@ -46,14 +50,21 @@ export class LoginComponent implements OnInit {
       this.authService.greeting = `Hello ${serverLoginResponse.first_name}`;
       this.authService.username = serverLoginResponse.first_name;
 
-      console.log(serverLoginResponse);
+      console.log('serverLoginResponse: ' + serverLoginResponse);
       console.log(serverLoginResponse.message);
       console.log(serverLoginResponse.token);
 
       this.authService.createCookie(serverLoginResponse);
       this.init();
       this.loginForm.reset();
-    });
+
+      let redirect = this.authService.redirecturl ? this.router.parseUrl(this.authService.redirecturl) : '/favorites';
+      this.router.navigateByUrl(redirect).then((res) => {
+        this.authService.redirecturl = null;
+      },(err) => {
+        throwError('Failed to redirect from login');
+      });
+     });
   }
 
   isValidInput(): Boolean {
