@@ -13,7 +13,6 @@ import { JsongalleryComponent } from './jsongallery/jsongallery.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { NavbarComponent } from './navbar/navbar.component';
-import { NavbarComunicationService } from './navbarComunication.service';
 import { LoginComponent } from './login/login.component';
 import { MyfavoritesComponent } from './myfavorites/myfavorites.component';
 import { ImageuploadComponent } from './imageupload/imageupload.component';
@@ -31,7 +30,6 @@ import { TokeninterceptorService } from './tokeninterceptor.service';
     NgbModule,
     MDBBootstrapModule.forRoot()
   ], providers: [CookieService,
-    NavbarComunicationService,
     AuthService,
     AuthGuard,
     {
