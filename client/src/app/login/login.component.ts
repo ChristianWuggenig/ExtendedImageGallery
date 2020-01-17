@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { CookieService } from 'ngx-cookie-service';
 import { JsongalleryService } from '../jsongallery.service';
-import {NavbarComunicationService} from '../navbarComunication.service';
 import {AuthService} from '../auth.service';
 
 @Component({
@@ -21,10 +19,7 @@ export class LoginComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private galleryService: JsongalleryService,
-    private authService: AuthService,
-    private cookie: CookieService,
-    private navbarCommunicationService: NavbarComunicationService
-  ) { }
+    private authService: AuthService) { }
 
   ngOnInit() {
     this.loginForm = new FormGroup({
@@ -50,12 +45,12 @@ export class LoginComponent implements OnInit {
     this.authService.login(loginUrl, data).subscribe((serverLoginResponse: any) => {
       this.authService.greeting = `Hello ${serverLoginResponse.first_name}`;
       this.authService.username = serverLoginResponse.first_name;
-      this.navbarCommunicationService.inputChanged(serverLoginResponse.first_name);
 
+      console.log(serverLoginResponse);
       console.log(serverLoginResponse.message);
       console.log(serverLoginResponse.token);
 
-      this.authService.createCookie(serverLoginResponse.token);
+      this.authService.createCookie(serverLoginResponse);
       this.init();
       this.loginForm.reset();
     });
@@ -70,9 +65,7 @@ export class LoginComponent implements OnInit {
     return false;
   }
   init(): void {
-    if (this.cookie) {
-      const cookieData = JSON.parse(this.cookie.get(this.authService.config.localUserInfo));
-      this.authService.greeting = `Hello ${cookieData.first_name} ${cookieData.last_name}!`;
+    if (this.authService.isLoggedIn()) {
       this.galleryService.load();
     } else {
       this.authService.loggedIn = false;
