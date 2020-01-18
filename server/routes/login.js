@@ -47,7 +47,7 @@ function check_DB_for_login_data(email, pass, res) {
             // no results
             if (rows.length < 1) {
                 res.status(401).json({
-                    "message": "login failed. No such user."
+                    "message": "Login failed. No such user."
                 });
                 logger.error('User with this email and password not found in DB. 401 response returned');
                 return;

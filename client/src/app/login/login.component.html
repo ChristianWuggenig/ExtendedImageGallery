@@ -1,16 +1,20 @@
-<!--
-<div>
-  <h1>{{greeting}}</h1>
-  <button *ngIf="loggedIn" (click)="logout()">Logout</button>
-</div>
-<div *ngIf="!loggedIn">
--->
-<form [formGroup]="loginForm">
+<!--##############################################################-->
+<!--Comments in this template-file are code for debugging purposes-->
+<!--##############################################################-->
+
+
+<form [formGroup]="loginForm" #loginform>
   <!-- this div is just for debugging purpose -->
+  <!--
   <div id="displayFormValues">
-    Value: {{loginForm.value | json}}
+    Form Value: {{loginForm.value | json}}
   </div>
-  <div  class="form-group">
+  <div id="displayFormClasses">
+    <b>Form Classes: {{loginform.className}}</b>
+  </div>
+  -->
+
+  <div class="form-group">
     <label for="email"><b>Email</b></label>
     <input #emailField id="email" class="form-control" type="email" formControlName="email" email="true" required>
     <div *ngIf="loginForm.controls['email'].hasError('required')" class="alert alert-danger">
@@ -19,7 +23,14 @@
     <div *ngIf="loginForm.controls['email'].hasError('email')" class="alert alert-danger">
       Please enter an email address
     </div>
+    <div [hidden]="!loginForm.controls['email'].hasError('invalid')" class="alert alert-danger">
+      There is no user account matching this email address! Try again.
+    </div>
+    <!--
+    <b>Email Classes: {{emailField.className}}</b>
+    -->
   </div>
+
   <div class="form-group">
     <label for="password"><b>Password</b></label>
     <input #passwordField id="password" class="form-control" type="password" formControlName="password" required>
@@ -29,10 +40,13 @@
     <div *ngIf="loginForm.controls['password'].hasError('minlength')" class="alert alert-danger">
       Please at least 4 characters
     </div>
+    <div [hidden]="!loginForm.controls['password'].hasError('invalid')" class="alert alert-danger">
+      There is no user account matching this password! Try again.
+    </div>
+    <!--
+    <b>Password Classes: {{passwordField.className}}</b>
+    -->
   </div>
-    <button [disabled]="!loginForm.valid" class="btn btn-primary" (click)="login()">Login</button>
+  <button [disabled]="!loginForm.valid" class="btn btn-primary" (click)="login()">Login</button>
   <div id="loginMessage">{{loginMessage}}</div>
 </form>
-<!--
-</div>
--->
