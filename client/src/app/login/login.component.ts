@@ -4,7 +4,6 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import { Router } from '@angular/router';
 import { JsongalleryService } from '../jsongallery.service';
 import {AuthService} from '../auth.service';
-import {throwError} from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -33,7 +32,7 @@ export class LoginComponent implements OnInit {
       ]),
       'password': new FormControl(this.password, [
         Validators.required,
-        Validators.minLength(2)
+        Validators.minLength(4)
       ])
     });
     console.log('init');
@@ -46,25 +45,37 @@ export class LoginComponent implements OnInit {
     console.log(loginUrl);
 
     const data = {email: this.email, pass: this.password};
-    this.authService.login(loginUrl, data).subscribe((serverLoginResponse: any) => {
-      this.authService.greeting = `Hello ${serverLoginResponse.first_name}`;
-      this.authService.username = serverLoginResponse.first_name;
+    this.authService.login(loginUrl, data)
+      .then((serverLoginResponse: any) => {
+        this.authService.greeting = `Hello ${serverLoginResponse.first_name}`;
+        this.authService.username = serverLoginResponse.first_name;
 
-      console.log('serverLoginResponse: ' + serverLoginResponse);
-      console.log(serverLoginResponse.message);
-      console.log(serverLoginResponse.token);
+        console.log('serverLoginResponse: ', serverLoginResponse);
+        console.log('response.message', serverLoginResponse.message);
+        console.log(serverLoginResponse.token);
 
-      this.authService.createCookie(serverLoginResponse);
-      this.init();
-      this.loginForm.reset();
+        this.authService.createCookie(serverLoginResponse);
+        this.init();
+        this.loginForm.reset();
 
-      let redirect = this.authService.redirecturl ? this.router.parseUrl(this.authService.redirecturl) : '/favorites';
-      this.router.navigateByUrl(redirect).then((res) => {
-        this.authService.redirecturl = null;
-      },(err) => {
-        throwError('Failed to redirect from login');
+        let redirect = this.authService.redirecturl ? this.router.parseUrl(this.authService.redirecturl) : '/favorites';
+        this.router.navigateByUrl(redirect).then((res) => {
+          this.authService.redirecturl = null;
+          if (!res) {
+            console.error('Navigation after login failed');
+          }
+        }, (err) => {
+          console.error('Navigation error after login');
+        });
+      })
+      .catch((serverLoginError: HttpErrorResponse) => {
+        console.error(`Server login failed with response: `, serverLoginError.status, serverLoginError.statusText, ', ', serverLoginError.error.message);
+        if (serverLoginError.status === 401) {
+          this.loginForm.controls['password'].setErrors({invalid: true});
+          this.loginForm.controls['email'].setErrors({invalid: true});
+          setTimeout(() => { this.loginForm.reset(); }, 5000);
+        }
       });
-     });
   }
 
   isValidInput(): Boolean {
