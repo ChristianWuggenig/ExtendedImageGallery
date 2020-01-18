@@ -33,7 +33,7 @@ export class LoginComponent implements OnInit {
       ]),
       'password': new FormControl(this.password, [
         Validators.required,
-        Validators.minLength(2)
+        Validators.minLength(4)
       ])
     });
     console.log('init');

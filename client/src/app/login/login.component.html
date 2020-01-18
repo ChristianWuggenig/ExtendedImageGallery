@@ -13,12 +13,24 @@
   <div  class="form-group">
     <label for="email"><b>Email</b></label>
     <input #emailField id="email" class="form-control" type="email" formControlName="email" email="true" required>
+    <div *ngIf="loginForm.controls['email'].hasError('required')" class="alert alert-danger">
+      Please enter an email address
+    </div>
+    <div *ngIf="loginForm.controls['email'].hasError('email')" class="alert alert-danger">
+      Please enter an email address
+    </div>
   </div>
   <div class="form-group">
     <label for="password"><b>Password</b></label>
     <input #passwordField id="password" class="form-control" type="password" formControlName="password" required>
+    <div *ngIf="loginForm.controls['password'].hasError('required')" class="alert alert-danger">
+      Please enter a password
+    </div>
+    <div *ngIf="loginForm.controls['password'].hasError('minlength')" class="alert alert-danger">
+      Please at least 4 characters
+    </div>
   </div>
-  <button class="btn btn-primary" (click)="login()">Login</button>
+    <button [disabled]="!loginForm.valid" class="btn btn-primary" (click)="login()">Login</button>
   <div id="loginMessage">{{loginMessage}}</div>
 </form>
 <!--
