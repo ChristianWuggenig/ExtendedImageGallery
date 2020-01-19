@@ -1,0 +1,50 @@
+#displayDIV {
+  background-color:silver;
+  height:100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#rowFlexDiv {
+  display: flex;
+  flex-direction: row;
+}
+
+#information {
+  display: flex;
+  flex-direction: column;
+  margin-right: 3%;
+  margin-left: 1%;
+  margin-top: 0.5%;
+}
+
+.gallery > img {
+  margin: 5px;
+}
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#buttons {
+  margin-left: 0.5%;
+}
+
+#displayDIV img.bigIMG {
+  margin-top: 1%;
+  margin-left: 1%;
+  width: 80vw;
+  max-width: 1000px;
+}
+
+@media(max-width: 600px) {
+  #rowFlexDiv {
+    flex-direction: column;
+    margin-left: 1%;
+  }
+
+  #displayDIV img.bigIMG {
+    width: 93vw;
+    margin-right: 3%;
+  }
+}
