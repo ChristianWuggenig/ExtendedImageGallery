@@ -5,7 +5,7 @@ const getDb = require("../db").getDb;
 const log4js = require('log4js');
 let logger = log4js.getLogger();
 logger.level = 'debug'; // Levels: (ALL < TRACE < DEBUG < INFO < WARN < ERROR < FATAL < MARK < OFF)
-//const fs = require('fs');
+const fs = require('fs');
 const cfg = require('../config.json');
 const multer = require('multer');
 var storage = multer.diskStorage({
@@ -17,6 +17,8 @@ var storage = multer.diskStorage({
     }
 })
 var upload = multer({ storage: storage });
+const resizeimage = require('sharp');
+
 
 router.patch('/:id', checkAuth, (req, res) => {
     let db = getDb();
@@ -34,12 +36,64 @@ router.patch('/:id', checkAuth, (req, res) => {
     });
 });
 
+function storeUploadInDB(filepath, res) {
+    let db = getDb();
+
+    const sql = 'insert into image (url_big, url_small, description) values ($url_big, $url_small, "");';
+    db.serialize(function () {
+        let stmt = db.prepare(sql);
+        // let resultUser = {};
+        let preparedParameter = {
+            $url_small: filepath.url_small,
+            $url_big: filepath.url_big
+        };
+
+        stmt.run(preparedParameter, function(err) {
+            if (err) {
+                logger.error(error);
+                res.status(401).json({message: "DB-Error occurred at inserting uploaded file"});
+                return console.log(err.message);
+            }
+
+            console.log(`A row has been inserted with rowid ${this.lastID}`);
+        });
+
+        logger.debug('Upload successfully inserted into DB');
+
+        stmt.finalize();
+    });
+};
+
 router.post('/upload', checkAuth, upload.single('image'), (req, res) => {
     logger.debug('Image upload request for file: ', req.file.filename);
 
-    res.status(200).json({message: `Upload request of file ${req.file.filename} received on server!`});
-    // TODO: store the uploaded image in DB + resize
-});
+    let oldFilePath = `./public/img/uploaded/${req.file.filename}`;
+    let newFilePathBig = `./public/img/${req.file.filename}_big`;
+    let newFilePathSmall = `./public/img/${req.file.filename}_small`;
+    let newUrlSmall = `img/${req.file.filename}_small`;
+    let newUrlBig = `img/${req.file.filename}_big`;
 
+    resizeimage(`./public/img/uploaded/${req.file.filename}`)
+        .resize({width: 3000}) // our big images: width:3000, height:2000
+        .toFile(newFilePathBig)
+        .then(data => {
+            logger.debug('Successfully resized upload to big image: ', data)
+        })
+        .catch(err => {
+            logger.info('Error resizing upload to big image: ', err)
+        });
+    resizeimage(`./public/img/uploaded/${req.file.filename}`)
+        .resize({width: 320}) // our small images: width:320, height:213
+        .toFile(newFilePathSmall)
+        .then(data => {
+            logger.debug('Successfully resized upload to small image: ', data)
+        })
+        .catch(err => {
+            logger.info('Error resizing upload to small image: ', err)
+        });
+
+    storeUploadInDB({url_big: newUrlBig, url_small: newUrlSmall}, res);
+    res.status(200).json({message: `File ${req.file.filename} successfully uploaded`, details: 'Also stored in DB'});
+});
 
 module.exports = router;
