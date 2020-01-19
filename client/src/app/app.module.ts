@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CookieService } from 'ngx-cookie-service';
+import { RatingModule } from 'ng-starrating';
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -28,6 +29,7 @@ import { TokeninterceptorService } from './tokeninterceptor.service';
     HttpClientModule,
     ReactiveFormsModule,
     NgbModule,
+    RatingModule,
     MDBBootstrapModule.forRoot()
   ], providers: [CookieService,
     AuthService,

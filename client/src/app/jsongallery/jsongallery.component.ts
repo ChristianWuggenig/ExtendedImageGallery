@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
 import { JsongalleryService } from '../jsongallery.service';
+import { StarRatingComponent } from 'ng-starrating';
 
 @Component({
   selector: 'app-jsongallery',
@@ -61,6 +62,12 @@ export class JsongalleryComponent implements OnInit {
   }
   updateDescription(): void {
     this.galleryService.updateDesc(this.bigImgId, this.desc);
+  }
+  onRate($event: {oldValue: number, newValue: number, starRating: StarRatingComponent}) {
+    /*alert(`Old Value:${$event.oldValue},
+    New Value: ${$event.newValue},
+    Checked Color: ${$event.starRating.checkedcolor},
+    Unchecked Color: ${$event.starRating.uncheckedcolor}`); */
   }
   updateDescriptionColor() {
     /* TODO: Update description-color after changig it to red. If update was clicked, change back to black. */
