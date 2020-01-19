@@ -1,0 +1,12 @@
+form {
+  width: 60%;
+  margin: auto;
+  padding-bottom: 10%;
+  padding-top: 10%;
+}
+div[class*=spinner] {
+	margin: auto;
+}
+button#uploadBtn {
+  float: right;
+}
