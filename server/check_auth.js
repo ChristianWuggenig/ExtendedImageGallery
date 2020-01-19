@@ -23,7 +23,7 @@ module.exports = (req, res, next) => {
             next();
         }
         if (rows.length < 1) { // token not found in DB
-            logger.error('Token not found in DB. rows.length=', rows.length);
+            logger.error('Token not found in DB. rows.length=', rows.length + "token: " + token);
             res.status(401).send({message: 'Not authorized to access this service'});
         }
         if (rows.length === 1){ // ok, exactly one user with that token

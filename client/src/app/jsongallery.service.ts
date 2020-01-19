@@ -16,6 +16,7 @@ export class JsongalleryService {
     galleryRoute: 'gallery',
     searchRoute: 's',
     searchParameter: 'searchString',
+    favoriteRoute: 'favorites',
     imageRoute: 'image',
     localUserInfo: 'wt18user',
     cookieExpiry: 3600000,
@@ -65,6 +66,27 @@ export class JsongalleryService {
         );
       });
      }*/
+  }
+
+  loadFavorites(): void {
+    this.http.get(`http://${this.config.serverHost}:${this.config.serverPort}/${this.config.galleryRoute}/` +
+      `${this.config.favoriteRoute}`)
+      .pipe(
+        catchError(this.handleError)
+      )
+      .subscribe((data: any) => {
+        const jsonData = JSON.parse(data);
+        this.images = [];
+        Object.keys(jsonData).forEach(
+          (key) => {
+            const image = new Image(key,
+              `http://${this.config.serverHost}:${this.config.serverPort}/${jsonData[key].dataBig}`,
+              `http://${this.config.serverHost}:${this.config.serverPort}/${jsonData[key].dataSmall}`,
+              jsonData[key].description);
+            this.images.push(image);
+          }
+        );
+      });
   }
 
   search(searchString: string): void {
