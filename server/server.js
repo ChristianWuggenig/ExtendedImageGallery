@@ -15,7 +15,7 @@ app.use(morgan('common'));//morgan('dev'));
 
 let bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
-app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.json({ limit: '20mb' })); // support json encoded bodies, max size 20MB
 
 // set routes
 const loginRoutes = require('./routes/login');
@@ -25,7 +25,6 @@ const imageRoutes = require('./routes/image');
 app.use("/login", loginRoutes);
 app.use("/gallery", galleryRoutes);
 app.use("/image", imageRoutes);
-
 // default route
 /*
 * EX02

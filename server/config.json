@@ -12,5 +12,8 @@
     "auth": {
         "jwt_key": "secret",
         "expiration": "1h"
+    },
+    "upload": {
+        "imagedir": "/public/img/uploaded"
     }
 }

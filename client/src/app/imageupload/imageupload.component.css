@@ -1,0 +1,18 @@
+form {
+  width: 60%;
+  margin: auto;
+  padding-bottom: 10%;
+  padding-top: 10%;
+}
+div[class*=spinner] {
+	margin: auto;
+}
+button#uploadBtn {
+  float: right;
+}
+input.ng-invalid {
+  border-left: 10px solid red;
+}
+input.ng-valid {
+  border-left: 10px solid green;
+}

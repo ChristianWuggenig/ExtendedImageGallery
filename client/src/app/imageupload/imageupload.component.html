@@ -1,1 +1,24 @@
-<p>imageupload works!</p>
+<form [formGroup]="uploadForm">
+	<div class="justify-content-center">
+    <div *ngIf="message" class="alert alert-info">
+      {{ message }}
+    </div>
+		<div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text">Select image</span>
+      </div>
+			<div class="custom-file">
+				<input type="file" accept="image/*" class="custom-file-input" id="selected" #selected (change)="onSelectionChange($event)" (click)="message=''" >
+        <label class="custom-file-label" for="selected"></label>
+        <div *ngIf="fileName; then showFilename else showDefaultMsg"></div>
+        <ng-template #showFilename>
+        <label class="custom-file-label" for="selected">{{ fileName }}</label>
+        </ng-template>
+        <ng-template #showDefaultMsg>
+          <label class="custom-file-label" for="selected">Choose file....</label>
+        </ng-template>
+			</div>
+		</div>
+    <button [disabled]="!fileName" id="uploadBtn" class="btn btn-primary" (click)="onUpload(selected)">Upload</button>
+	</div>
+</form>

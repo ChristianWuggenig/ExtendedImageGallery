@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
-import { throwError, Observable } from 'rxjs';
-import { catchError } from 'rxjs/operators';
 import { CookieService } from 'ngx-cookie-service';
 
 const httpOptions = {
@@ -32,23 +30,14 @@ export class AuthService {
 
   constructor(private http: HttpClient, private cookie: CookieService) { }
 
-  login(loginUrl: any, body: { pass: string }) {
-    return this.http.post(loginUrl, body, httpOptions)
-      .pipe(
-        catchError(this.handleError)
-      );
-  }
-
-  private handleError(error: HttpErrorResponse) {
-    if (error.error instanceof ErrorEvent) {
-      console.error('An error occurred:', error.error.message);
-    } else {
-      console.error(
-        `Backend returned code ${error.status}, ` +
-        `body was: ${error.error}`);
-    }
-    return throwError(
-      'Something bad happened; please try again later.');
+  login(url: string, data: { pass: string }) {
+    return new Promise((resolve, reject) => {
+      this.http.post(url, data, httpOptions || {})
+        .subscribe(
+          response => resolve(response),
+          err => reject(err)
+        );
+    });
   }
 
   isLoggedIn(): boolean {
