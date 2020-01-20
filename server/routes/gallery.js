@@ -17,14 +17,12 @@ router.get('/', (req, res) => {
  * show a user's personal dashboard (first page shown when logged in)
  */
 router.get('/favorites', checkAuth, (req, res) => {
-    let sqltest = "select id, url_big, url_small, description " +
-        "from image " +
-        "where id = 5";
+
     let sql = "select i.id, i.url_big, i.url_small, i.description " +
         "from image i, users_images ui " +
         "where ui.user_id = ? and i.id = ui.image_id";
 
-    executePreparedQuery(sqltest, req.user_id, res);
+    executePreparedQuery(sql, req.user_id, res);
 });
 
 /**
