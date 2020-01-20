@@ -36,6 +36,11 @@ router.patch('/:id', checkAuth, (req, res) => {
     });
 });
 
+/**
+ * Store an image in the images table in the database.
+ * @param filepath disklocation of the image
+ * @param res response object, only set in case of error
+ */
 function storeUploadInDB(filepath, res) {
     let db = getDb();
 
@@ -64,6 +69,10 @@ function storeUploadInDB(filepath, res) {
     });
 };
 
+/**
+ * Upload an image to the server. Resize them so all our images have same width.
+ * HTTP POST has to be of type multipart form-data
+ */
 router.post('/upload', checkAuth, upload.single('image'), (req, res) => {
     logger.debug('Image upload request for file: ', req.file.filename);
 
@@ -95,5 +104,32 @@ router.post('/upload', checkAuth, upload.single('image'), (req, res) => {
     storeUploadInDB({url_big: newUrlBig, url_small: newUrlSmall}, res);
     res.status(200).json({message: `File ${req.file.filename} successfully uploaded`, details: 'Also stored in DB'});
 });
+
+/**
+ * Delete an image from users favorites. Only allowed to logged in users.
+ * @param id: the Database-id of the image to be deleted
+ *
+ */
+router.delete('/image/delete/:id', checkAuth, (req, res) => {
+    let db = getDb();
+
+    let imageToDelete = req.params.id;
+
+    const sql = 'delete from users_images where user_id=$user_id and image_id=$image_id;';
+
+    db.serialize(function () {
+        let stmt = db.prepare(sql);
+        stmt.all({$user_id: req.user_id, $image_id: imageToDelete}, function (err, rows) {
+            if (err) {
+                logger.error(err);
+                res.status(401).json({message: "DB-Error, file could not be deleted"});
+                return console.log(err.message);
+            }
+            Logger.debug('Successfully deleted image from this users favorites');
+        });
+
+        stmt.finalize();
+    });
+})
 
 module.exports = router;
