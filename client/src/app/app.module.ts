@@ -20,6 +20,7 @@ import { ImageuploadComponent } from './imageupload/imageupload.component';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { TokeninterceptorService } from './tokeninterceptor.service';
+import { ImageuploadService } from './imageupload.service';
 
 @NgModule({
   imports: [
@@ -34,6 +35,7 @@ import { TokeninterceptorService } from './tokeninterceptor.service';
   ], providers: [CookieService,
     AuthService,
     AuthGuard,
+    ImageuploadService,
     {
       provide: HTTP_INTERCEPTORS,
       multi: true,

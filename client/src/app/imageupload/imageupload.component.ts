@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {ImageuploadService} from '../imageupload.service';
+import {HttpResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-imageupload',
@@ -7,9 +9,26 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ImageuploadComponent implements OnInit {
 
-  constructor() { }
+  private selectedFile: File;
+  private message: string;
 
-  ngOnInit() {
+  constructor(private imageuploadService: ImageuploadService) {
   }
 
+  ngOnInit() { }
+
+  onUpload(input: HTMLInputElement): void {
+    const file = input.files[0];
+    if (file) {
+      const dataToSend = {data: file};
+      this.imageuploadService.upload(dataToSend)
+        .then((serverUploadResponse: HttpResponse<object>) => {
+          console.log('Received server upload response: ', serverUploadResponse);
+        }, (serverUploadErrorResponse) => {
+          console.log('Received server upload error response: ', serverUploadErrorResponse);
+        });
+    }
+
+    // Todo: log responses to user
+  }
 }
