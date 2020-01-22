@@ -42,7 +42,7 @@
         <div *dropdownMenu class="dropdown-menu dropdown-menu-right dropdown dropdown-primary" role="menu">
 <!--      <a class="dropdown-item waves-light" mdbWavesEffect href="#">My account</a>   -->
           <a class="dropdown-item waves-light" mdbWavesEffect *ngIf="!authService.isLoggedIn()" routerLink="/login">Log in</a>
-          <a class="dropdown-item waves-light" mdbWavesEffect *ngIf="authService.isLoggedIn()" routerLink="/gallery" (click)="logout()">Log out</a>
+          <a class="dropdown-item waves-light" mdbWavesEffect *ngIf="authService.isLoggedIn()" (click)="logout()">Log out</a>
         </div>
       </li>
 
