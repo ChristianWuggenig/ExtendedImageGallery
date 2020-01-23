@@ -20,9 +20,10 @@ export class ImageuploadService {
 
   constructor( private http: HttpClient ) { }
 
-  upload(dataToBeUploaded: { data: File }) {
+  upload(dataToBeUploaded: { data: File, description: string }) {
     const serveruploadurl = `http://${this.config.serverHost}:${this.config.serverPort}/${this.config.imageRoute}/${this.config.uploadRoute}`;
     let formdata = new FormData();
+    formdata.append('description', dataToBeUploaded.description);
     formdata.append('image', dataToBeUploaded.data, dataToBeUploaded.data.name);
 console.log('File image: ', dataToBeUploaded.data);
 console.log('This is created formdata')
