@@ -19,6 +19,13 @@
         </ng-template>
 			</div>
 		</div>
-    <button [disabled]="!fileName" id="uploadBtn" class="btn btn-primary" (click)="onUpload(selected)">Upload</button>
+    <div class="form-group">
+      <input #description type="text" class="form-control" formControlName="description" id="description" maxlength="100" placeholder="Enter an image description .... ">
+    </div>
+    <button [disabled]="(!fileName || !description.value)" id="uploadBtn" class="btn btn-primary" (click)="onUpload(selected, description)">Upload</button>
 	</div>
+<!--
+  {{uploadForm.value|json}}
+  {{description.value}}
+-->
 </form>

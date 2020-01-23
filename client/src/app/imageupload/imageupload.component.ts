@@ -13,21 +13,25 @@ export class ImageuploadComponent implements OnInit {
   private file: File;
   private fileName: string;
   private message: string;
-  private uploadForm;
+  private uploadForm: FormGroup;
+  private description: string;
 
   constructor(private imageuploadService: ImageuploadService) {
   }
 
   ngOnInit() {
     this.uploadForm = new FormGroup({
-      'input': new FormControl(this.file, [Validators.required])
+      'input': new FormControl(this.file, [Validators.required]),
+      'description': new FormControl(this.description, [Validators.required])
     });
   }
 
-  onUpload(input: HTMLInputElement): void {
+  onUpload(input: HTMLInputElement, input_description: HTMLInputElement): void {
     const file = input.files[0];
+    this.description = input_description.value;
+    console.log(this.description);
     if (file) {
-      const dataToSend = {data: file};
+      const dataToSend = {data: file, description: this.description};
       this.imageuploadService.upload(dataToSend)
         .then((serverUploadResponse: HttpResponse<object>) => {
           console.log('Received server upload response: ', serverUploadResponse);

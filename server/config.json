@@ -14,6 +14,10 @@
         "expiration": "1h"
     },
     "upload": {
-        "imagedir": "/public/img/uploaded"
+        "imagedir": "/public/img/uploaded",
+        "width_big": 3000,
+        "height_big": 2000,
+        "width_small": 320,
+        "height_small": 213
     }
 }
