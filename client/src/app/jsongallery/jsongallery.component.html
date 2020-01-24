@@ -10,7 +10,9 @@
     <img class="bigIMG" src={{bigImgSrc}} attr.data-dbid={{bigImgId}} (click)="toggleBigImage($event,false)"/>
     <div id="information">
       <p class="desc">{{desc}}</p>
-      <p class="tags"></p>
+      <div id="tags" class="tags">
+        <span *ngFor="let tag of galleryService.tags">{{tag}} </span>
+      </div>
       <h3>Comments:</h3>
       <p class="comments">      <input #comment id="comment" class="form-control" placeholder="Write a comment">      </p>
       <h3>Rating:</h3>
