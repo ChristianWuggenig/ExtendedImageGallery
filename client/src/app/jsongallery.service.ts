@@ -18,11 +18,13 @@ export class JsongalleryService {
     searchParameter: 'searchString',
     favoriteRoute: 'favorites',
     imageRoute: 'image',
+    tagRoute: 't',
     localUserInfo: 'wt18user',
     cookieExpiry: 3600000,
     standardGreeting: `Hello guest!`
   };
   images: Image[] = [];
+  tags: string[] = [];
   constructor(private http: HttpClient, private cookie: CookieService) { }
   load(): void {
     const galleryUrl = `http://${this.config.serverHost}:${this.config.serverPort}/${this.config.galleryRoute}`;
@@ -86,6 +88,18 @@ export class JsongalleryService {
             this.images.push(image);
           }
         );
+      });
+  }
+
+  loadTag(id: number): void {
+    const url = `http://${this.config.serverHost}:${this.config.serverPort}/${this.config.imageRoute}/` +
+    `${id}/${this.config.tagRoute}`;
+    this.http.get(url)
+      .pipe(
+        catchError(this.handleError)
+      )
+      .subscribe((data: any) => {
+        this.tags = JSON.parse(data);
       });
   }
 

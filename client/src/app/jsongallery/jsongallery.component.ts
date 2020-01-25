@@ -27,6 +27,7 @@ export class JsongalleryComponent implements OnInit {
       this.bigImgSrc = event.target.dataset.large;
       this.bigImgId = event.target.dataset.dbid;
       this.desc = event.target.alt;
+      this.galleryService.loadTag(Number(this.bigImgId));
     } else {
       clearTimeout(this.intervalID);
     }
@@ -50,6 +51,7 @@ export class JsongalleryComponent implements OnInit {
       this.bigImgSrc = newImg.data_big;
       this.desc = newImg.desc;
       this.bigImgId = newImg.id;
+      this.galleryService.loadTag(Number(this.bigImgId));
     }
   }
   togglePlay(): void {

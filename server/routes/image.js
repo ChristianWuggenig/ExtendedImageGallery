@@ -133,6 +133,28 @@ router.delete('/image/delete/:id', checkAuth, (req, res) => {
 
         stmt.finalize();
     });
-})
+});
+
+router.get('/:id/t', (req, res) => {
+    let db = getDb();
+    let imageId = req.params.id;
+    let sql = 'select t.name ' +
+        'from tag t join images_tags it ' +
+        'on t.id = it.tag_id ' +
+        'where it.image_id = ?';
+
+    db.serialize(function () {
+        sql = db.prepare(sql);
+        let tags = [];
+        sql.each(imageId, function (error, row) {
+            tags.push('#' + row.name);
+        }, function (error, count) {
+            sql.finalize();
+
+            res.json(JSON.stringify(tags));
+            res.status(200);
+        });
+    });
+});
 
 module.exports = router;
