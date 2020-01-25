@@ -25,7 +25,8 @@ export class AuthService {
     localUserInfo: 'wt18user',
     cookieExpiry: 3600000,
     standardGreeting: `Hello guest!`,
-    standardUsername: 'Guest'
+    standardUsername: 'Guest',
+    logoutRoute: 'logout'
   };
 
   constructor(private http: HttpClient, private cookie: CookieService) { }
@@ -33,6 +34,17 @@ export class AuthService {
   login(url: string, data: { pass: string }) {
     return new Promise((resolve, reject) => {
       this.http.post(url, data, httpOptions || {})
+        .subscribe(
+          response => resolve(response),
+          err => reject(err)
+        );
+    });
+  }
+
+  logout() {
+    const logouturl = `http://${this.config.serverHost}:${this.config.serverPort}/${this.config.logoutRoute}`;
+    return new Promise((resolve, reject) => {
+      this.http.delete(logouturl, httpOptions || {})
         .subscribe(
           response => resolve(response),
           err => reject(err)

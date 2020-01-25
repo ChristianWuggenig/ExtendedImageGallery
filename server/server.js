@@ -1,6 +1,6 @@
-let cfg = require('./config.json')
+let cfg = require('./config.json');
 let express = require('express');
-let cors = require('cors')
+let cors = require('cors');
 const app = express();
 app.use(express.static('public')); // host public folder
 app.options('*', cors()); // Enable preflight HTTP options
@@ -19,12 +19,14 @@ app.use(bodyParser.json({ limit: '20mb' })); // support json encoded bodies, max
 
 // set routes
 const loginRoutes = require('./routes/login');
+const logoutRoutes = require('./routes/logout');
 const galleryRoutes = require('./routes/gallery');
 const imageRoutes = require('./routes/image');
 
 app.use("/login", loginRoutes);
 app.use("/gallery", galleryRoutes);
 app.use("/image", imageRoutes);
+app.use("/logout", logoutRoutes);
 // default route
 /*
 * EX02
