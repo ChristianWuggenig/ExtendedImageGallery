@@ -44,13 +44,14 @@ router.patch('/:id', checkAuth, (req, res) => {
 function storeUploadInDB(filepath, res) {
     let db = getDb();
 
-    const sql = 'insert into image (url_big, url_small, description) values ($url_big, $url_small, "");';
+    const sql = 'insert into image (url_big, url_small, description) values ($url_big, $url_small, $description);';
     db.serialize(function () {
         let stmt = db.prepare(sql);
         // let resultUser = {};
         let preparedParameter = {
             $url_small: filepath.url_small,
-            $url_big: filepath.url_big
+            $url_big: filepath.url_big,
+            $description: filepath.description
         };
 
         stmt.run(preparedParameter, function(err) {
@@ -75,15 +76,17 @@ function storeUploadInDB(filepath, res) {
  */
 router.post('/upload', checkAuth, upload.single('image'), (req, res) => {
     logger.debug('Image upload request for file: ', req.file.filename);
+    logger.debug('descriptop received: ', req.body.description);
 
     let oldFilePath = `./public/img/uploaded/${req.file.filename}`;
     let newFilePathBig = `./public/img/${req.file.filename}_big`;
     let newFilePathSmall = `./public/img/${req.file.filename}_small`;
     let newUrlSmall = `img/${req.file.filename}_small`;
     let newUrlBig = `img/${req.file.filename}_big`;
+    let newDescription= req.body.description;
 
     resizeimage(`./public/img/uploaded/${req.file.filename}`)
-        .resize({width: 3000}) // our big images: width:3000, height:2000
+        .resize({width: cfg.upload.width_big}) // our big images: width:3000, height:2000
         .toFile(newFilePathBig)
         .then(data => {
             logger.debug('Successfully resized upload to big image: ', data)
@@ -92,7 +95,7 @@ router.post('/upload', checkAuth, upload.single('image'), (req, res) => {
             logger.info('Error resizing upload to big image: ', err)
         });
     resizeimage(`./public/img/uploaded/${req.file.filename}`)
-        .resize({width: 320}) // our small images: width:320, height:213
+        .resize({width: cfg.upload.width_small}) // our small images: width:320, height:213
         .toFile(newFilePathSmall)
         .then(data => {
             logger.debug('Successfully resized upload to small image: ', data)
@@ -101,7 +104,7 @@ router.post('/upload', checkAuth, upload.single('image'), (req, res) => {
             logger.info('Error resizing upload to small image: ', err)
         });
 
-    storeUploadInDB({url_big: newUrlBig, url_small: newUrlSmall}, res);
+    storeUploadInDB({url_big: newUrlBig, url_small: newUrlSmall, description: newDescription}, res);
     res.status(200).json({message: `File ${req.file.filename} successfully uploaded`, details: 'Also stored in DB'});
 });
 
