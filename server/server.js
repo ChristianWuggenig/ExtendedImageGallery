@@ -22,11 +22,13 @@ const loginRoutes = require('./routes/login');
 const logoutRoutes = require('./routes/logout');
 const galleryRoutes = require('./routes/gallery');
 const imageRoutes = require('./routes/image');
+const myaccountRoutes = require('./routes/myaccount');
 
 app.use("/login", loginRoutes);
 app.use("/gallery", galleryRoutes);
 app.use("/image", imageRoutes);
 app.use("/logout", logoutRoutes);
+app.use("/myaccount", myaccountRoutes);
 // default route
 /*
 * EX02
