@@ -17,7 +17,7 @@
       <p class="comments">      <input #comment id="comment" class="form-control" placeholder="Write a comment">      </p>
       <h3>Rating:</h3>
       <star-rating value="5" totalstars="5" checkedcolor="gold" uncheckedcolor="black" size="24px" readonly="false" (rate)="onRate($event)"></star-rating>
-      <button id="addFavBtn">Add to favorites</button>
+      <button id="addFavBtn" mdbWavesEffect (click)="uploadImage(getCurrentImgIdx(), 2)">Add to favorites</button>
 
     </div>
   </div>
