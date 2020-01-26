@@ -16,6 +16,7 @@ export class MyaccountComponent implements OnInit {
   lastname: string;
   password: string;
   dataForm: FormGroup;
+  message: string;
 
   constructor(
     private http: HttpClient,
@@ -71,15 +72,15 @@ export class MyaccountComponent implements OnInit {
         this.authService.username = this.firstname;
 
         console.log('serverUpdateResponse: ', serverUpdateResponse);
-        console.log('response.message', serverUpdateResponse.message);
         console.log(serverUpdateResponse.token);
 
 //        this.authService.createCookie(serverUpdateResponse);
 //        this.dataForm.reset();
-
+        this.setInfo(serverUpdateResponse.message);
       })
       .catch((serverLoginError: HttpErrorResponse) => {
         console.error(`Server data update failed with response: `, serverLoginError.status, serverLoginError.statusText, ', ', serverLoginError.error.message);
+        this.setInfo('Error occurred. User data could not be updated');
         if (serverLoginError.status === 401) {
           this.dataForm.controls['password'].setErrors({invalid: true});
           this.dataForm.controls['firstname'].setErrors({invalid: true});
@@ -87,6 +88,11 @@ export class MyaccountComponent implements OnInit {
           setTimeout(() => { this.dataForm.reset(); }, 5000);
         }
       });
+  }
+
+  setInfo(msg: string): void {
+    this.message = msg;
+    setTimeout( () => { this.message = null; }, 5000);
   }
 
   isValidInput(): Boolean {
