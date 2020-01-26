@@ -8,13 +8,7 @@
     <div *ngIf="dataForm.controls['firstname'].hasError('required')" class="alert alert-danger">
       Please enter your first name
     </div>
-<!--    <div *ngIf="dataForm.controls['email'].hasError('email')" class="alert alert-danger">
-      Please enter an email address
-    </div>
-    <div [hidden]="!dataForm.controls['email'].hasError('invalid')" class="alert alert-danger">
-      There is no user account matching this email address! Try again.
-    </div>
--->  </div>
+  </div>
 
   <div class="form-group">
     <label for="lastname"><b>Last Name</b></label>
@@ -22,25 +16,16 @@
     <div *ngIf="dataForm.controls['lastname'].hasError('required')" class="alert alert-danger">
       Please enter your last name
     </div>
-<!--    <div *ngIf="dataForm.controls['password'].hasError('minlength')" class="alert alert-danger">
-      Please at least 4 characters
-    </div>
-    <div [hidden]="!dataForm.controls['password'].hasError('invalid')" class="alert alert-danger">
-      There is no user account matching this password! Try again.
-    </div>
--->  </div>
+  </div>
   <div class="form-group">
     <label for="password"><b>Password</b></label>
     <input #passwordField id="password" class="form-control" type="text" formControlName="password" required>
     <div *ngIf="dataForm.controls['password'].hasError('required')" class="alert alert-danger">
       Please enter a password
     </div>
-        <div *ngIf="dataForm.controls['password'].hasError('minlength')" class="alert alert-danger">
-          Please at least 4 characters
-        </div>
-<!--        <div [hidden]="!dataForm.controls['password'].hasError('invalid')" class="alert alert-danger">
-          There is no user account matching this password! Try again.
-        </div>
-    -->  </div>
+    <div *ngIf="dataForm.controls['password'].hasError('minlength')" class="alert alert-danger">
+      Please at least 4 characters
+    </div>
+  </div>
   <button [disabled]="(!dataForm.valid || message)" class="btn btn-primary" (click)="updateData()">Save</button>
 </form>
