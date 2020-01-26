@@ -108,6 +108,30 @@ router.post('/upload', checkAuth, upload.single('image'), (req, res) => {
     res.status(200).json({message: `File ${req.file.filename} successfully uploaded`, details: 'Also stored in DB'});
 });
 
+
+router.post('/image/favorites/:id', checkAuth, (req, res) => {
+    let db = getDb();
+
+    let imageToPost = req.params.id;
+
+    const sql = 'insert into users_images (user_id, image_id) values ($user_id, $image_id);';
+
+    db.serialize(function () {
+        let stmt = db.prepare(sql);
+        stmt.all({$user_id: req.params.user_id, $image_id: imageToPost}, function (err, rows) {
+            if (err) {
+                logger.error(err);
+                res.status(401).json({message: "DB-Error, file could not be added"});
+                return console.log(err.message);
+            }
+            Logger.debug('Successfully deleted image from this users favorites');
+        });
+
+        stmt.finalize();
+    });
+});
+
+
 /**
  * Delete an image from users favorites. Only allowed to logged in users.
  * @param id: the Database-id of the image to be deleted
@@ -134,6 +158,7 @@ router.delete('/image/delete/:id', checkAuth, (req, res) => {
         stmt.finalize();
     });
 });
+
 
 router.get('/:id/t', (req, res) => {
     let db = getDb();

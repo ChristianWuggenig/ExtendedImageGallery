@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpErrorResponse, HttpResponse} from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
 import { JsongalleryService } from '../jsongallery.service';
 import { StarRatingComponent } from 'ng-starrating';
+import {FavoritesService} from '../favorites.service';
 
 @Component({
   selector: 'app-myfavorites',
@@ -16,7 +17,9 @@ export class MyfavoritesComponent implements OnInit {
   desc: string;
   showBigImg = false;
   intervalID = null;
-  constructor(private http: HttpClient, public galleryService: JsongalleryService, private cookie: CookieService) {
+  private message: string;
+  constructor(private http: HttpClient, public galleryService: JsongalleryService, private cookie: CookieService,
+              private favoritesService: FavoritesService) {
   }
   ngOnInit() {
     this.galleryService.loadFavorites();
@@ -60,9 +63,37 @@ export class MyfavoritesComponent implements OnInit {
       this.intervalID = setInterval( () => this.jump(+1), 2000);
     }
   }
-  updateDescription(): void {
-    this.galleryService.updateDesc(this.bigImgId, this.desc);
+  getCurrentUser(): number {
+    return 2;
   }
+
+  uploadImage(currentImgIdx: number, currentUser: number): void {
+    const image_id = currentImgIdx;
+    const user_id = currentUser;
+    const dataToAdd = {image_id: image_id, user_id: user_id};
+    this.favoritesService.addToFavorites(dataToAdd)
+      .then((serverUploadResponse: HttpResponse<object>) => {
+          console.log('Received server upload response: ', serverUploadResponse);
+          this.setUserNotification('Upload successful');
+        }, (serverUploadErrorResponse) => {
+          console.log('Received server upload error response: ', serverUploadErrorResponse);
+          this.setUserNotification('Upload error');
+        })
+        .catch((serverUploadErrorResponse: HttpErrorResponse) => {
+          // tslint:disable-next-line:max-line-length
+          console.error(`Server upload failed with response: `, serverUploadErrorResponse.status, serverUploadErrorResponse.statusText, ', ', serverUploadErrorResponse.error.message);
+          if (serverUploadErrorResponse.status === 401) {
+            this.setUserNotification(serverUploadErrorResponse.error.message);
+          }
+        });
+    }
+  private setUserNotification(message: string): void {
+    this.message = message;
+    setTimeout(() => { this.message = null; }, 5000);
+  }
+
+
+
   onRate($event: {oldValue: number, newValue: number, starRating: StarRatingComponent}) {
     /*alert(`Old Value:${$event.oldValue},
     New Value: ${$event.newValue},

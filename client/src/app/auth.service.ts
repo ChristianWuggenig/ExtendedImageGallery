@@ -67,7 +67,9 @@ export class AuthService {
     if (this.cookie.check(this.config.localUserInfo)) {
       let cookie = this.cookie.get(this.config.localUserInfo);
       return JSON.parse(cookie as string).first_name;
-    } else { return ''; }
+    } else {
+      return '';
+    }
   }
 
   deleteCookie(): void {
