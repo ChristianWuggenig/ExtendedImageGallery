@@ -18,7 +18,6 @@ export class JsongalleryService {
     searchParameter: 'searchString',
     favoriteRoute: 'favorites',
     imageRoute: 'image',
-    tagRoute: 't',
     localUserInfo: 'wt18user',
     cookieExpiry: 3600000,
     standardGreeting: `Hello guest!`

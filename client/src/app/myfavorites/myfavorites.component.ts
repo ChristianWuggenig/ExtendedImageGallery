@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import {HttpClient, HttpErrorResponse, HttpResponse} from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
 import { JsongalleryService } from '../jsongallery.service';
 import {FavoritesService} from '../favorites.service';
 import {StarRatingComponent} from 'ng-starrating';
+import {HttpClient, HttpErrorResponse, HttpResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-myfavorites',
@@ -18,8 +18,7 @@ export class MyfavoritesComponent implements OnInit {
   showBigImg = false;
   intervalID = null;
   private message: string;
-  constructor(private http: HttpClient, public galleryService: JsongalleryService, private cookie: CookieService,
-              private favoritesService: FavoritesService) {
+  constructor(private http: HttpClient, public galleryService: JsongalleryService, private cookieService: CookieService, private favoritesService: FavoritesService) {
   }
   ngOnInit() {
     this.galleryService.loadFavorites();
@@ -75,13 +74,13 @@ export class MyfavoritesComponent implements OnInit {
         this.setUserNotification('Upload error');
       })
       .catch((serverUploadErrorResponse: HttpErrorResponse) => {
-        // tslint:disable-next-line:max-line-length
         console.error(`Server upload failed with response: `, serverUploadErrorResponse.status, serverUploadErrorResponse.statusText, ', ', serverUploadErrorResponse.error.message);
         if (serverUploadErrorResponse.status === 401) {
           this.setUserNotification(serverUploadErrorResponse.error.message);
         }
       });
   }
+
   private setUserNotification(message: string): void {
     this.message = message;
     setTimeout(() => { this.message = null; }, 5000);

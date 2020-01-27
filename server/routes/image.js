@@ -112,15 +112,16 @@ router.post('/upload', checkAuth, upload.single('image'), (req, res) => {
 * Add an image to users_images
 */
 
-router.post('/favorites:id',   (req, res) => {
+router.post('/favorites:image_id',  checkAuth, (req, res) => {
+    logger.debug('test received: ', req.body);
     let db = getDb();
     const sql = 'insert into users_images (user_id, image_id) values ($user_id, $image_id);';
-    console.log(JSON.stringify(req.body))
+
     db.serialize(function () {
         let stmt = db.prepare(sql);
         let preparedParameter = {
             $user_id: 2,
-            $image_id: req.params.id
+            $image_id: req.params.image_id.toString()[req.params.image_id.length-1]
         };
         stmt.run(preparedParameter, function(err) {
             if (err) {
@@ -145,15 +146,15 @@ router.post('/favorites:id',   (req, res) => {
  * @param id: the Database-id of the image to be deleted
  *
  */
-router.delete('/favorites/:id', checkAuth, (req, res) => {
+router.delete('/favorites:image_id', checkAuth, (req, res) => {
     let db = getDb();
-    let imageToDelete = req.params.id;
     let preparedParameter = {
-        $image_id: imageToDelete
+        $image_id: req.params.image_id.toString()[req.params.image_id.length-1],
+        $user_id: 2
     }
 
-    // const sql = 'delete from users_images where user_id=$user_id and image_id=$image_id;';
-    const sql = 'delete from users_images where image_id=$image_id;';
+    const sql = 'delete from users_images where user_id=$user_id and image_id=$image_id;';
+
 
     db.serialize(function () {
         let stmt = db.prepare(sql);

@@ -80,7 +80,7 @@ export class JsongalleryComponent implements OnInit {
 
   uploadImage(currentImgIdx: number, currentUser: number): void {
     const image_id = currentImgIdx;
-    const user_id = currentUser;
+    const user_id = 2;
     const dataToAdd = {image_id: image_id, user_id: user_id};
     this.favoritesService.addToFavorites(dataToAdd)
       .then((serverUploadResponse: HttpResponse<object>) => {
@@ -91,7 +91,6 @@ export class JsongalleryComponent implements OnInit {
         this.setUserNotification('Upload error');
       })
       .catch((serverUploadErrorResponse: HttpErrorResponse) => {
-        // tslint:disable-next-line:max-line-length
         console.error(`Server upload failed with response: `, serverUploadErrorResponse.status, serverUploadErrorResponse.statusText, ', ', serverUploadErrorResponse.error.message);
         if (serverUploadErrorResponse.status === 401) {
            this.setUserNotification(serverUploadErrorResponse.error.message);
