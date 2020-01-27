@@ -112,7 +112,7 @@ router.post('/upload', checkAuth, upload.single('image'), (req, res) => {
 * Add an image to users_images
 */
 
-router.post('/favorites:image_id',  checkAuth, (req, res) => {
+router.post('/favorites:image_id/:user_id',  checkAuth, (req, res) => {
     logger.debug('test received: ', req.body);
     let db = getDb();
     const sql = 'insert into users_images (user_id, image_id) values ($user_id, $image_id);';
@@ -120,7 +120,7 @@ router.post('/favorites:image_id',  checkAuth, (req, res) => {
     db.serialize(function () {
         let stmt = db.prepare(sql);
         let preparedParameter = {
-            $user_id: 2,
+            $user_id: req.params.user_id.toString()[req.params.user_id.length-1],
             $image_id: req.params.image_id.toString()[req.params.image_id.length-1]
         };
         stmt.run(preparedParameter, function(err) {
@@ -146,11 +146,11 @@ router.post('/favorites:image_id',  checkAuth, (req, res) => {
  * @param id: the Database-id of the image to be deleted
  *
  */
-router.delete('/favorites:image_id', checkAuth, (req, res) => {
+router.delete('/favorites:image_id/:user_id', checkAuth, (req, res) => {
     let db = getDb();
     let preparedParameter = {
         $image_id: req.params.image_id.toString()[req.params.image_id.length-1],
-        $user_id: 2
+        $user_id: req.params.user_id.toString()[req.params.user_id.length-1]
     }
 
     const sql = 'delete from users_images where user_id=$user_id and image_id=$image_id;';
@@ -175,7 +175,38 @@ router.delete('/favorites:image_id', checkAuth, (req, res) => {
     });
 });
 
+/**
+ * Add an rating to an image
+ *
+ */
 
+router.post('/rating:image_id/:rating_id',  checkAuth, (req, res) => {
+    logger.debug('test received: ', req.body);
+    let db = getDb();
+    const sql = 'insert into images_ratings (image_id, rating_id) values ($image_id, $rating_id);';
+
+    db.serialize(function () {
+        let stmt = db.prepare(sql);
+        let preparedParameter = {
+            $image_id: req.params.image_id.toString()[req.params.image_id.length-1],
+            $rating_id: req.params.rating_id.toString()[req.params.rating_id.length-1]
+        };
+        stmt.run(preparedParameter, function(err) {
+            if (err) {
+                logger.error(err);
+                res.status(401).json({message: "DB-Error occurred at inserting uploaded file"});
+                return console.log(err.message);
+            }
+
+            console.log(`A row has been inserted with rowid ${this.lastID}`);
+        });
+
+        logger.debug('Upload successfully inserted into DB');
+
+        stmt.finalize();
+        res.status(200).json({message: `File successfully uploaded`, details: 'Also stored in DB'});
+    });
+});
 
 
 router.get('/:id/t', (req, res) => {

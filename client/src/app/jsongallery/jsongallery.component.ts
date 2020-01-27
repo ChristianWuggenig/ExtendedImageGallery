@@ -68,11 +68,26 @@ export class JsongalleryComponent implements OnInit {
   updateDescription(): void {
     this.galleryService.updateDesc(this.bigImgId, this.desc);
   }
-  onRate($event: {oldValue: number, newValue: number, starRating: StarRatingComponent}) {
-    /*alert(`Old Value:${$event.oldValue},
-    New Value: ${$event.newValue},
-    Checked Color: ${$event.starRating.checkedcolor},
-    Unchecked Color: ${$event.starRating.uncheckedcolor}`); */
+  onRate($event: {oldValue: number, newValue: number, starRating: StarRatingComponent}, image: number) {
+    const image_id = image;
+    const rating_id = $event.newValue;
+    console.log(rating_id);
+    const dataToAdd = {rating_id: rating_id, image_id: image_id};
+    this.favoritesService.addRating(dataToAdd)
+      .then((serverUploadResponse: HttpResponse<object>) => {
+        console.log('Received server upload response: ', serverUploadResponse);
+        this.setUserNotification('Upload successful');
+      }, (serverUploadErrorResponse) => {
+        console.log('Received server upload error response: ', serverUploadErrorResponse);
+        this.setUserNotification('Upload error');
+      })
+      .catch((serverUploadErrorResponse: HttpErrorResponse) => {
+        // tslint:disable-next-line:max-line-length
+        console.error(`Server upload failed with response: `, serverUploadErrorResponse.status, serverUploadErrorResponse.statusText, ', ', serverUploadErrorResponse.error.message);
+        if (serverUploadErrorResponse.status === 401) {
+          this.setUserNotification(serverUploadErrorResponse.error.message);
+        }
+      });
   }
   getCurrentUser(): number {
     return 2;
@@ -91,6 +106,7 @@ export class JsongalleryComponent implements OnInit {
         this.setUserNotification('Upload error');
       })
       .catch((serverUploadErrorResponse: HttpErrorResponse) => {
+        // tslint:disable-next-line:max-line-length
         console.error(`Server upload failed with response: `, serverUploadErrorResponse.status, serverUploadErrorResponse.statusText, ', ', serverUploadErrorResponse.error.message);
         if (serverUploadErrorResponse.status === 401) {
            this.setUserNotification(serverUploadErrorResponse.error.message);

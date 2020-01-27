@@ -19,6 +19,7 @@ export class JsongalleryService {
     favoriteRoute: 'favorites',
     imageRoute: 'image',
     localUserInfo: 'wt18user',
+    tagRoute: 't',
     cookieExpiry: 3600000,
     standardGreeting: `Hello guest!`
   };
