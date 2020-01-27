@@ -22,6 +22,7 @@ export class AuthService {
     loginRoute: 'login',
     galleryRoute: 'gallery',
     imageRoute: 'image',
+    updateRoute: 'myaccount',
     localUserInfo: 'wt18user',
     cookieExpiry: 3600000,
     standardGreeting: `Hello guest!`,
@@ -82,5 +83,25 @@ export class AuthService {
     time += this.config.cookieExpiry;
     now.setTime(time);
     this.cookie.set(this.config.localUserInfo, JSON.stringify(jsonData), now);
+  }
+
+  updateData(url: string, data: { firstName: string, lastName: string, password: string }) {
+    return new Promise((resolve, reject) => {
+      this.http.put(url, data, httpOptions || {})
+        .subscribe(
+          response => resolve(response),
+          err => reject(err)
+        );
+    });
+  }
+
+  getData(url: string) {
+    return new Promise((resolve, reject) => {
+      this.http.get(url, httpOptions || {})
+        .subscribe(
+          response => resolve(response),
+          err => reject(err)
+        );
+    });
   }
 }
