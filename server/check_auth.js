@@ -40,19 +40,4 @@ module.exports = (req, res, next) => {
             next();
         }
     });
-
-    // db.query("SELECT id FROM users where token='" + token + "'", function (err, result, fields) {
-    //     if (err) {
-    //         res.status(400).json({ message: "an error occured" });
-    //     }
-    //     /*
-    //     * wenn wir das token finden und nur ein user diesen token hat, rufen wir next auf
-    //     */
-    //     if(result.length == 1){
-    //         req.user_id = result[0].id;
-    //         next();
-    //     } else {
-    //         res.status(401).json({message:"Not authorised!"});
-    //     }
-    // });
 };

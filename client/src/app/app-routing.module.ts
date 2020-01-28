@@ -5,6 +5,7 @@ import { ImageuploadComponent } from './imageupload/imageupload.component';
 import { MyfavoritesComponent } from './myfavorites/myfavorites.component';
 import { LoginComponent } from './login/login.component';
 import { AuthGuard } from './auth.guard';
+import {MyaccountComponent} from "./myaccount/myaccount.component";
 
 const routes: Routes = [
   {
@@ -28,6 +29,11 @@ const routes: Routes = [
   {
     path: 'favorites',
     component: MyfavoritesComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'myaccount',
+    component: MyaccountComponent,
     canActivate: [AuthGuard]
   }
 ];

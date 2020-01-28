@@ -21,6 +21,7 @@ import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { TokeninterceptorService } from './tokeninterceptor.service';
 import { ImageuploadService } from './imageupload.service';
+import { MyaccountComponent } from './myaccount/myaccount.component';
 
 @NgModule({
   imports: [
@@ -47,7 +48,8 @@ import { ImageuploadService } from './imageupload.service';
     NavbarComponent,
     LoginComponent,
     MyfavoritesComponent,
-    ImageuploadComponent
+    ImageuploadComponent,
+    MyaccountComponent
   ],
   bootstrap: [ AppComponent ]
 })
