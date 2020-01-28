@@ -31,6 +31,7 @@ export class JsongalleryComponent implements OnInit {
       this.bigImgId = event.target.dataset.dbid;
       this.desc = event.target.alt;
       this.galleryService.loadTag(Number(this.bigImgId));
+      this.galleryService.loadRating(Number(this.bigImgId));
     } else {
       clearTimeout(this.intervalID);
     }
@@ -55,6 +56,7 @@ export class JsongalleryComponent implements OnInit {
       this.desc = newImg.desc;
       this.bigImgId = newImg.id;
       this.galleryService.loadTag(Number(this.bigImgId));
+      this.galleryService.loadRating(Number(this.bigImgId));
     }
   }
   togglePlay(): void {
@@ -86,14 +88,9 @@ export class JsongalleryComponent implements OnInit {
         }
       });
   }
-  getCurrentUser(): number {
-    return 2;
-  }
-
-  uploadImage(currentImgIdx: number, currentUser: number): void {
+  uploadImage(currentImgIdx: number): void {
     const image_id = currentImgIdx;
-    const user_id = 2;
-    const dataToAdd = {image_id: image_id, user_id: user_id};
+    const dataToAdd = {image_id: image_id};
     this.favoritesService.addToFavorites(dataToAdd)
       .then((serverUploadResponse: HttpResponse<object>) => {
         console.log('Received server upload response: ', serverUploadResponse);

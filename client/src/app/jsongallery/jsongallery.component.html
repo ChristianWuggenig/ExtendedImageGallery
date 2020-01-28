@@ -16,10 +16,10 @@
       <h3>Comments:</h3>
       <p class="comments">      <input #comment id="comment" class="form-control" placeholder="Write a comment">      </p>
       <h3>Rating:</h3>
-      <star-rating value="5" totalstars="5" checkedcolor="gold" uncheckedcolor="black" size="24px" readonly="false" (rate)="onRate($event, getCurrentImgIdx())"></star-rating>
+      <star-rating value="5" totalstars="5" checkedcolor="gold" uncheckedcolor="black" size="24px" readonly="false" (rate)="onRate($event, getCurrentImgIdx()+1)"></star-rating>
       <h4>Average rating:</h4>
-      <p id="avgrating">4,3</p>
-      <button id="addFavBtn" mdbWavesEffect (click)="uploadImage(getCurrentImgIdx(), getCurrentUser())">Add to favorites</button>
+      <h1 *ngFor="let rating of galleryService.rating">{{rating}} </h1>
+      <button id="addFavBtn" mdbWavesEffect (click)="uploadImage(getCurrentImgIdx()+1)">Add to favorites</button>
 
     </div>
   </div>

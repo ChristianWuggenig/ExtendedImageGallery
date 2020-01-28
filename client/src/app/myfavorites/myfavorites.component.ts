@@ -63,9 +63,9 @@ export class MyfavoritesComponent implements OnInit {
       this.intervalID = setInterval( () => this.jump(+1), 2000);
     }
   }
-  removeImage(currentImgIdx: number, user_id: number): void {
+  removeImage(currentImgIdx: number): void {
     const image_id = currentImgIdx;
-    const dataToRemove = {image_id: image_id, user_id: user_id};
+    const dataToRemove = {image_id: image_id};
     this.favoritesService.removeFromFavorites(dataToRemove)
       .then((serverUploadResponse: HttpResponse<object>) => {
         console.log('Received server upload response: ', serverUploadResponse);
@@ -86,9 +86,6 @@ export class MyfavoritesComponent implements OnInit {
   private setUserNotification(message: string): void {
     this.message = message;
     setTimeout(() => { this.message = null; }, 5000);
-  }
-  getCurrentUser(): number {
-    return 2;
   }
 }
 

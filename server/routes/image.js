@@ -159,15 +159,14 @@ router.post('/upload', checkAuth, upload.single('image'), (req, res) => {
  * Add an image to users_images
  */
 
-router.post('/favorites:image_id/:user_id',  checkAuth, (req, res) => {
-    logger.debug('test received: ', req.body);
+router.post('/favorites:image_id',  checkAuth, (req, res) => {
     let db = getDb();
     const sql = 'insert into users_images (user_id, image_id) values ($user_id, $image_id);';
 
     db.serialize(function () {
         let stmt = db.prepare(sql);
         let preparedParameter = {
-            $user_id: req.params.user_id.toString()[req.params.user_id.length-1],
+            $user_id: req.user_id,
             $image_id: req.params.image_id.toString()[req.params.image_id.length-1]
         };
         stmt.run(preparedParameter, function(err) {
@@ -193,11 +192,11 @@ router.post('/favorites:image_id/:user_id',  checkAuth, (req, res) => {
  * @param id: the Database-id of the image to be deleted
  *
  */
-router.delete('/favorites:image_id/:user_id', checkAuth, (req, res) => {
+router.delete('/favorites:image_id', checkAuth, (req, res) => {
     let db = getDb();
     let preparedParameter = {
         $image_id: req.params.image_id.toString()[req.params.image_id.length-1],
-        $user_id: req.params.user_id.toString()[req.params.user_id.length-1]
+        $user_id: req.user_id
     }
 
     const sql = 'delete from users_images where user_id=$user_id and image_id=$image_id;';
@@ -254,7 +253,33 @@ router.post('/rating:image_id/:rating_id',  checkAuth, (req, res) => {
         res.status(200).json({message: `File successfully uploaded`, details: 'Also stored in DB'});
     });
 });
+/**
+ * get all ratings from a given image.
+ *
+ */
 
+router.get('/:id/rating', (req, res) => {
+    let db = getDb();
+    let imageId = req.params.id;
+    let sql = 'select rating_id ' +
+        'from images_ratings ' +
+        'where image_id = ?';
+
+    db.serialize(function () {
+        sql = db.prepare(sql);
+        let ratings = [];
+        let result = [];
+        sql.each(imageId, function (error, row) {
+            ratings.push(parseInt(row.rating_id));
+        }, function (error, count) {
+            sql.finalize();
+            let avgRating = (ratings.reduce((a,b) => a + b, 0)/ratings.length).toFixed(2);
+            result.push(avgRating);
+            res.json(JSON.stringify(result));
+            res.status(200);
+        });
+    });
+});
 /**
  * get all tags from a given image. the image id is sent as request-parameter
  * returns a json-array with the hashtags to the client
