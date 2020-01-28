@@ -45,29 +45,6 @@ export class JsongalleryService {
           }
         );
       });
-    /* if (this.cookie) {
-      const cookieData = JSON.parse(this.cookie.get(this.config.localUserInfo));
-      const httpOptions = {headers: new HttpHeaders({
-          'Content-Type': 'application/json',
-          'Authorization': cookieData.token + ''
-        })
-      };
-      this.http.get(galleryUrl, httpOptions)
-      .pipe(
-        catchError(this.handleError)
-      ).subscribe((data: any) => {
-        const jsonData = JSON.parse(data);
-        Object.keys(jsonData).forEach(
-          (key) => {
-            const image = new Image(key,
-              `http://${this.config.serverHost}:${this.config.serverPort}/${jsonData[key].dataBig}`,
-              `http://${this.config.serverHost}:${this.config.serverPort}/${jsonData[key].dataSmall}`,
-              jsonData[key].description);
-            this.images.push(image);
-          }
-        );
-      });
-     }*/
   }
 
   loadFavorites(): void {
@@ -129,27 +106,6 @@ export class JsongalleryService {
     } else { // if the searchString is empty, reload the whole gallery
       this.images = [];
       this.load();
-    }
-  }
-
-  updateDesc(imgId: string, desc: string) {
-    const imageUrl = `http://${this.config.serverHost}:${this.config.serverPort}/${this.config.imageRoute}/${imgId}`;
-    if (this.cookie) {
-      const cookieData = JSON.parse(this.cookie.get(this.config.localUserInfo));
-      const httpOptions = {headers: new HttpHeaders({
-          'Content-Type': 'application/json',
-          'Authorization': cookieData.token + ''
-        })
-      };
-      const jsonData = {'description': desc};
-      return this.http.patch(imageUrl, JSON.stringify(jsonData), httpOptions)
-      .pipe(catchError(this.handleError)).subscribe(
-        (data: any) => {
-          if (data.message === 'successful description update!') {
-            this.images[this.getImgIdx(imgId)].desc = desc;
-          }
-        }
-      );
     }
   }
   getImgIdx(id: string): number {

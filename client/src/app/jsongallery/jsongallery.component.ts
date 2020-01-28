@@ -62,16 +62,10 @@ export class JsongalleryComponent implements OnInit {
           this.intervalID = setInterval( () => this.jump(+1), 2000);
       }
   }
-  updateDescription(): void {
-    this.galleryService.updateDesc(this.bigImgId, this.desc);
-  }
   onRate($event: {oldValue: number, newValue: number, starRating: StarRatingComponent}) {
     /*alert(`Old Value:${$event.oldValue},
     New Value: ${$event.newValue},
     Checked Color: ${$event.starRating.checkedcolor},
     Unchecked Color: ${$event.starRating.uncheckedcolor}`); */
-  }
-  updateDescriptionColor() {
-    /* TODO: Update description-color after changig it to red. If update was clicked, change back to black. */
   }
 }

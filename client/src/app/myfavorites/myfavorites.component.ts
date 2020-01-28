@@ -60,9 +60,6 @@ export class MyfavoritesComponent implements OnInit {
       this.intervalID = setInterval( () => this.jump(+1), 2000);
     }
   }
-  updateDescription(): void {
-    this.galleryService.updateDesc(this.bigImgId, this.desc);
-  }
   onRate($event: {oldValue: number, newValue: number, starRating: StarRatingComponent}) {
     /*alert(`Old Value:${$event.oldValue},
     New Value: ${$event.newValue},

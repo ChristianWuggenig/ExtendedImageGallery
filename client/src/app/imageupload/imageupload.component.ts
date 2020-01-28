@@ -15,6 +15,7 @@ export class ImageuploadComponent implements OnInit {
   private message: string;
   private uploadForm: FormGroup;
   private description: string;
+  private tags: string;
 
   constructor(private imageuploadService: ImageuploadService) {
   }
@@ -22,16 +23,18 @@ export class ImageuploadComponent implements OnInit {
   ngOnInit() {
     this.uploadForm = new FormGroup({
       'input': new FormControl(this.file, [Validators.required]),
-      'description': new FormControl(this.description, [Validators.required])
+      'description': new FormControl(this.description, [Validators.required]),
+      'tags': new FormControl(this.tags, [Validators.required])
     });
   }
 
-  onUpload(input: HTMLInputElement, input_description: HTMLInputElement): void {
+  onUpload(input: HTMLInputElement, input_description: HTMLInputElement, tags: HTMLInputElement): void {
     const file = input.files[0];
     this.description = input_description.value;
+    this.tags = tags.value;
     console.log(this.description);
     if (file) {
-      const dataToSend = {data: file, description: this.description};
+      const dataToSend = {data: file, description: this.description, tags: this.tags};
       this.imageuploadService.upload(dataToSend)
         .then((serverUploadResponse: HttpResponse<object>) => {
           console.log('Received server upload response: ', serverUploadResponse);
@@ -42,7 +45,8 @@ export class ImageuploadComponent implements OnInit {
           this.setUserNotification('Upload error');
         })
         .catch((serverUploadErrorResponse: HttpErrorResponse) => {
-          console.error(`Server upload failed with response: `, serverUploadErrorResponse.status, serverUploadErrorResponse.statusText, ', ', serverUploadErrorResponse.error.message);
+          console.error(`Server upload failed with response: `, serverUploadErrorResponse.status, serverUploadErrorResponse.statusText,
+            ', ', serverUploadErrorResponse.error.message);
           if (serverUploadErrorResponse.status === 401) {
             this.setUserNotification(serverUploadErrorResponse.error.message);
           }
