@@ -65,9 +65,6 @@ export class JsongalleryComponent implements OnInit {
           this.intervalID = setInterval( () => this.jump(+1), 2000);
       }
   }
-  updateDescription(): void {
-    this.galleryService.updateDesc(this.bigImgId, this.desc);
-  }
   onRate($event: {oldValue: number, newValue: number, starRating: StarRatingComponent}, image: number) {
     const image_id = image;
     const rating_id = $event.newValue;
