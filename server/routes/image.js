@@ -18,23 +18,7 @@ var storage = multer.diskStorage({
 })
 var upload = multer({ storage: storage });
 const resizeimage = require('sharp');
-
-
-router.patch('/:id', checkAuth, (req, res) => {
-    let db = getDb();
-    let id = req.params.id;
-    let desc = req.body.description;
-    let user_id = req.user_id;
-    /*
-    * EX05
-    */
-    db.query("UPDATE images i,users_images ui SET i.description='"+desc+"' where i.id="+id+" and ui.user_id="+user_id+" and ui.image_id="+id,function(err,result){
-        if (err) { res.status(400).json({ status:400, message: "an error occured" });}
-        if(result.affectedRows == 1){
-            res.status(200).json({message: "successful description update!"});
-        }
-    });
-});
+let db = getDb();
 
 /**
  * Store an image in the images table in the database.
@@ -42,12 +26,9 @@ router.patch('/:id', checkAuth, (req, res) => {
  * @param res response object, only set in case of error
  */
 function storeUploadInDB(filepath, res) {
-    let db = getDb();
-
-    const sql = 'insert into image (url_big, url_small, description) values ($url_big, $url_small, $description);';
+    let sql = 'insert into image (url_big, url_small, description) values ($url_big, $url_small, $description);';
     db.serialize(function () {
         let stmt = db.prepare(sql);
-        // let resultUser = {};
         let preparedParameter = {
             $url_small: filepath.url_small,
             $url_big: filepath.url_big,
@@ -62,6 +43,8 @@ function storeUploadInDB(filepath, res) {
             }
 
             console.log(`A row has been inserted with rowid ${this.lastID}`);
+
+            insertToTags(this.lastID, filepath.tags.split(','));
         });
 
         logger.debug('Upload successfully inserted into DB');
@@ -69,6 +52,70 @@ function storeUploadInDB(filepath, res) {
         stmt.finalize();
     });
 };
+
+/**
+ * store the assigned tags of an image to the database
+ * @param imageId the id of the new added image
+ * @param tagsArray the array with the tags
+ */
+function insertToTags(imageId, tagsArray) {
+    for (let i = 0; i < tagsArray.length; i++) { //do this for every tag
+        sql = "select id from tag where name=?"; //see if the tag already exists in the db
+
+        db.serialize(function () {
+            sql = db.prepare(sql);
+            let id = 0;
+            sql.each(tagsArray[i], function (error, row) {
+                id = row.id;
+            }, function (error, count) {
+                if(id === 0) { //if it does not exists, create a new entry in tag-table
+                    let sql2 = "insert into tag(name) values(?)";
+                    sql2 = db.prepare(sql2);
+
+                    sql2.run(tagsArray[i], function(err) {
+                        if (err) {
+                            logger.error(error);
+                            res.status(401).json({message: "DB-Error occurred at inserting uploaded file"});
+                            return console.log(err.message);
+                        }
+
+                        insertToImagesTags(imageId, this.lastID); //link the image with the tag
+                    });
+
+                    sql2.finalize();
+                } else {
+                    insertToImagesTags(imageId, id); //link the image with the tag
+                }
+            });
+        });
+    }
+}
+
+/**
+ * link an image with a tag in the images_tags table in the db
+ * @param imageId the id of the image
+ * @param tagId the id of the tag
+ */
+function insertToImagesTags(imageId, tagId) {
+    let sql = 'insert into images_tags values($imageId, $tagId);';
+    db.serialize(function () {
+        let stmt = db.prepare(sql);
+        let preparedParameter = {
+            $imageId: imageId,
+            $tagId: tagId
+        };
+
+        stmt.run(preparedParameter, function(err) {
+            if (err) {
+                logger.error(error);
+                res.status(401).json({message: "DB-Error occurred at inserting uploaded file"});
+                return console.log(err.message);
+            }
+        });
+
+        stmt.finalize();
+    });
+}
 
 /**
  * Upload an image to the server. Resize them so all our images have same width.
@@ -79,11 +126,12 @@ router.post('/upload', checkAuth, upload.single('image'), (req, res) => {
     logger.debug('descriptop received: ', req.body.description);
 
     let oldFilePath = `./public/img/uploaded/${req.file.filename}`;
-    let newFilePathBig = `./public/img/${req.file.filename}_big`;
-    let newFilePathSmall = `./public/img/${req.file.filename}_small`;
-    let newUrlSmall = `img/${req.file.filename}_small`;
-    let newUrlBig = `img/${req.file.filename}_big`;
+    let newFilePathBig = `./public/img/${req.file.filename}_big.jpg`;
+    let newFilePathSmall = `./public/img/${req.file.filename}_small.jpg`;
+    let newUrlSmall = `img/${req.file.filename}_small.jpg`;
+    let newUrlBig = `img/${req.file.filename}_big.jpg`;
     let newDescription= req.body.description;
+    let newTags = req.body.tags;
 
     resizeimage(`./public/img/uploaded/${req.file.filename}`)
         .resize({width: cfg.upload.width_big}) // our big images: width:3000, height:2000
@@ -104,7 +152,7 @@ router.post('/upload', checkAuth, upload.single('image'), (req, res) => {
             logger.info('Error resizing upload to small image: ', err)
         });
 
-    storeUploadInDB({url_big: newUrlBig, url_small: newUrlSmall, description: newDescription}, res);
+    storeUploadInDB({url_big: newUrlBig, url_small: newUrlSmall, description: newDescription, tags: newTags}, res);
     res.status(200).json({message: `File ${req.file.filename} successfully uploaded`, details: 'Also stored in DB'});
 });
 
@@ -135,6 +183,10 @@ router.delete('/image/delete/:id', checkAuth, (req, res) => {
     });
 });
 
+/**
+ * get all tags from a given image. the image id is sent as request-parameter
+ * returns a json-array with the hashtags to the client
+ */
 router.get('/:id/t', (req, res) => {
     let db = getDb();
     let imageId = req.params.id;

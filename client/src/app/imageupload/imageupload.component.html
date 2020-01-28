@@ -1,5 +1,6 @@
 <form [formGroup]="uploadForm">
 	<div class="justify-content-center">
+    <h1>Upload a new image</h1>
     <div *ngIf="message" class="alert alert-info">
       {{ message }}
     </div>
@@ -21,8 +22,9 @@
 		</div>
     <div class="form-group">
       <input #description type="text" class="form-control" formControlName="description" id="description" maxlength="100" placeholder="Enter an image description .... ">
+      <br>
       <input #tags type="text" class="form-control" formControlName="tags" id="tags" placeholder="Enter tags, separated by commas...">
     </div>
-    <button [disabled]="!fileName" id="uploadBtn" class="btn btn-primary" (click)="onUpload(selected)">Upload</button>
+    <button [disabled]="!fileName" id="uploadBtn" class="btn btn-primary" (click)="onUpload(selected, description, tags)">Upload</button>
 	</div>
 </form>
