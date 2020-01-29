@@ -32,6 +32,7 @@ export class JsongalleryComponent implements OnInit {
       this.desc = event.target.alt;
       this.galleryService.loadTag(Number(this.bigImgId));
       this.galleryService.loadRating(Number(this.bigImgId));
+      this.galleryService.loadComments(Number(this.bigImgId));
     } else {
       clearTimeout(this.intervalID);
     }
@@ -57,6 +58,7 @@ export class JsongalleryComponent implements OnInit {
       this.bigImgId = newImg.id;
       this.galleryService.loadTag(Number(this.bigImgId));
       this.galleryService.loadRating(Number(this.bigImgId));
+      this.galleryService.loadComments(Number(this.bigImgId));
     }
   }
   togglePlay(): void {

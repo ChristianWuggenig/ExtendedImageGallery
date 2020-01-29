@@ -21,11 +21,13 @@ export class JsongalleryService {
     localUserInfo: 'wt18user',
     ratingRoute: 'rating',
     tagRoute: 't',
+    commentRoute: 'comments',
     cookieExpiry: 3600000,
     standardGreeting: `Hello guest!`
   };
   images: Image[] = [];
   tags: string[] = [];
+  comments: string[] = [];
   rating: string;
   constructor(private http: HttpClient, private cookie: CookieService) { }
   load(): void {
@@ -81,6 +83,20 @@ export class JsongalleryService {
         this.tags = JSON.parse(data);
       });
   }
+
+  loadComments(id: number): void {
+    const url = `http://${this.config.serverHost}:${this.config.serverPort}/${this.config.imageRoute}/` +
+      `${id}/${this.config.commentRoute}`;
+    this.http.get(url)
+      .pipe(
+        catchError(this.handleError)
+      )
+      .subscribe((data: any) => {
+        this.tags = JSON.parse(data);
+      });
+  }
+
+
   loadRating(id: number): void {
     const url = `http://${this.config.serverHost}:${this.config.serverPort}/${this.config.imageRoute}/` +
       `${id}/${this.config.ratingRoute}`;

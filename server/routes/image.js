@@ -158,7 +158,6 @@ router.post('/upload', checkAuth, upload.single('image'), (req, res) => {
 /**
  * Add an image to users_images
  */
-
 router.post('/favorites:image_id',  checkAuth, (req, res) => {
     let db = getDb();
     const sql = 'insert into users_images (user_id, image_id) values ($user_id, $image_id);';
@@ -281,9 +280,35 @@ router.get('/:id/rating', (req, res) => {
     });
 });
 /**
+ * Get all comments from image by image_id in req.para
+ */
+
+router.get('/:id/comments', (req, res) => {
+    let db = getDb();
+    let imageId = req.params.id;
+    let sql = 'select c.value ' +
+        'from comment c join images_comments ic ' +
+        'on c.id = ic.comment_id ' +
+        'where ic.image_id = ?';
+
+    db.serialize(function () {
+        sql = db.prepare(sql);
+        let comments = [];
+        sql.each(imageId, function (error, row) {
+            comments.push('Christian: ' + row.name);
+        }, function (error, count) {
+            sql.finalize();
+
+            res.json(JSON.stringify(comments));
+            res.status(200);
+        });
+    });
+});
+/**
  * get all tags from a given image. the image id is sent as request-parameter
  * returns a json-array with the hashtags to the client
  */
+
 router.get('/:id/t', (req, res) => {
     let db = getDb();
     let imageId = req.params.id;
