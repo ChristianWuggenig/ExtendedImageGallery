@@ -37,7 +37,7 @@ export class MyfavoritesComponent implements OnInit {
   getCurrentImgIdx(): number {
     for (let i = 0; i < this.galleryService.images.length; i++) {
       if (this.bigImgId === this.galleryService.images[i].id) {
-        return i;
+        return parseInt(this.galleryService.images[i].id);
       }
     }
     return -1;
