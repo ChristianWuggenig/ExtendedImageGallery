@@ -10,20 +10,16 @@
     <img class="bigIMG" src={{bigImgSrc}} attr.data-dbid={{bigImgId}} (click)="toggleBigImage($event,false)"/>
     <div id="information">
       <p class="desc">{{desc}}</p>
-      <p class="tags"></p>
-      <h3>Comments:</h3>
-      <p class="comments">      <input #comment id="comment" class="form-control" placeholder="Write a comment">      </p>
-      <h3>Rating:</h3>
-      <star-rating value="5" totalstars="5" checkedcolor="gold" uncheckedcolor="black" size="24px" readonly="false" (rate)="onRate($event)"></star-rating>
-      <button id="addFavBtn">Add to favorites</button>
-
+      <div id="tags" class="tags">
+        <span *ngFor="let tag of galleryService.tags">{{tag}} </span>
+      </div>
+      <button id="addFavBtn" mdbWavesEffect (click)="removeImage(getCurrentImgIdx())">Remove from favorites</button>
     </div>
   </div>
   <div id="buttons">
     <button mdbBtn color="info" mdbWavesEffect (click)="jump(-1)">prev</button>
     <button mdbBtn color="info" mdbWavesEffect (click)="togglePlay()">play/pause</button>
     <button mdbBtn color="info" mdbWavesEffect (click)="toggleBigImage($event,false)">exit</button>
-    <button mdbBtn color="info" mdbWavesEffect (click)="updateDescription()">update</button>
     <button mdbBtn color="info" mdbWavesEffect (click)="jump(+1)">next</button>
   </div>
 </div>

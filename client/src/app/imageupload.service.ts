@@ -1,10 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 
-//const httpOptions = {
-  // headers: new HttpHeaders({ 'Content-Type': 'multipart/form-data' })
-//};
-
 @Injectable({
   providedIn: 'root'
 })
@@ -26,9 +22,9 @@ export class ImageuploadService {
     const formdata = new FormData();
     formdata.append('description', dataToBeUploaded.description);
     formdata.append('image', dataToBeUploaded.data, dataToBeUploaded.data.name);
-    formdata.append('tags', dataToBeUploaded.tags)
+    formdata.append('tags', dataToBeUploaded.tags);
     console.log('File image: ', dataToBeUploaded.data);
-    console.log('This is created formdata')
+    console.log('This is created formdata');
     console.log(formdata);
 
 

@@ -18,13 +18,17 @@ export class JsongalleryService {
     searchParameter: 'searchString',
     favoriteRoute: 'favorites',
     imageRoute: 'image',
-    tagRoute: 't',
     localUserInfo: 'wt18user',
+    ratingRoute: 'rating',
+    tagRoute: 't',
+    commentRoute: 'comments',
     cookieExpiry: 3600000,
     standardGreeting: `Hello guest!`
   };
   images: Image[] = [];
   tags: string[] = [];
+  comments: string[] = [];
+  rating: string;
   constructor(private http: HttpClient, private cookie: CookieService) { }
   load(): void {
     const galleryUrl = `http://${this.config.serverHost}:${this.config.serverPort}/${this.config.galleryRoute}`;
@@ -80,6 +84,30 @@ export class JsongalleryService {
       });
   }
 
+  loadComments(id: number): void {
+    const url = `http://${this.config.serverHost}:${this.config.serverPort}/${this.config.imageRoute}/` +
+      `${id}/${this.config.commentRoute}`;
+    this.http.get(url)
+      .pipe(
+        catchError(this.handleError)
+      )
+      .subscribe((data: any) => {
+        this.tags = JSON.parse(data);
+      });
+  }
+
+
+  loadRating(id: number): void {
+    const url = `http://${this.config.serverHost}:${this.config.serverPort}/${this.config.imageRoute}/` +
+      `${id}/${this.config.ratingRoute}`;
+    this.http.get(url)
+      .pipe(
+        catchError(this.handleError)
+      )
+      .subscribe((data: any) => {
+        this.rating = JSON.parse(data);
+      });
+  }
   search(searchString: string): void {
     if (searchString !== '') {
       if (searchString.startsWith('#')) {
@@ -129,5 +157,27 @@ export class JsongalleryService {
     }
     return throwError(
       'Something bad happened; please try again later.');
+  }
+  addComment(comment: {comment: string, image_id: number}) {
+    // tslint:disable-next-line:max-line-length
+    const serveruploadurl = `http://${this.config.serverHost}:${this.config.serverPort}/${this.config.imageRoute}/${this.config.commentRoute}:image_id=${comment.image_id}/:comment_id=${comment.comment}`;
+    return new Promise((resolve, reject) => {
+      this.http.post(serveruploadurl, {}, {}) // httpOptions || {})
+        .subscribe(
+          response => resolve(response),
+          err => reject(err)
+        );
+    });
+  }
+  addRating(rating: { rating_id: number; image_id: number }) {
+    // tslint:disable-next-line:max-line-length
+    const serveruploadurl = `http://${this.config.serverHost}:${this.config.serverPort}/${this.config.imageRoute}/${this.config.ratingRoute}:image_id=${rating.image_id}/:rating_id=${rating.rating_id}`;
+    return new Promise((resolve, reject) => {
+      this.http.post(serveruploadurl, {}, {}) // httpOptions || {})
+        .subscribe(
+          response => resolve(response),
+          err => reject(err)
+        );
+    });
   }
 }

@@ -116,7 +116,6 @@ function insertToImagesTags(imageId, tagId) {
         stmt.finalize();
     });
 }
-
 /**
  * Upload an image to the server. Resize them so all our images have same width.
  * HTTP POST has to be of type multipart form-data
@@ -155,38 +154,208 @@ router.post('/upload', checkAuth, upload.single('image'), (req, res) => {
     storeUploadInDB({url_big: newUrlBig, url_small: newUrlSmall, description: newDescription, tags: newTags}, res);
     res.status(200).json({message: `File ${req.file.filename} successfully uploaded`, details: 'Also stored in DB'});
 });
+/**
+ * Add a comment to an image
+ * Push new comment to images_comments db
+ * Push new comment by id to comments db
+ */
+router.post('/comments:image_id/:comment_id', checkAuth,  (req, res) => {
+    const image_id = req.params.image_id.toString()[req.params.image_id.length-1];
+    const sql = 'insert into comment (value, date) values ($comment, $date); ';
+
+    db.serialize(function () {
+        let stmt = db.prepare(sql);
+        let preparedParameter = {
+            $comment: req.params.comment_id.replace(":comment_id=", ""),
+            $date: new Date().toJSON().slice(0,10).replace(/-/g,'/')
+        };
+        stmt.run(preparedParameter, function (err) {
+            if (err) {
+                logger.error(err);
+                res.status(401).json({message: "DB-Error occurred at inserting comment"});
+                return console.log(err.message);
+            }
+            insertToImagesComments(image_id, this.lastID);
+        });
+
+        logger.debug('Upload successfully inserted into DB');
+
+        stmt.finalize();
+        res.status(200).json({message: `Comment successfully uploaded`, details: 'Also stored in DB'});
+        });
+    });
+
+/**
+ * Add a comment to an image
+ * @param imageId
+ * @param commentId
+ */
+function insertToImagesComments(imageId, commentId) {
+    let sql = 'insert into images_comments values($imageId, $commentId);';
+    db.serialize(function () {
+        let stmt = db.prepare(sql);
+        let preparedParameter = {
+            $imageId: imageId,
+            $commentId: commentId
+        };
+
+        stmt.run(preparedParameter, function(err) {
+            if (err) {
+                logger.error(error);
+                res.status(401).json({message: "DB-Error occurred at inserting uploaded file"});
+                return console.log(err.message);
+            }
+        });
+
+        stmt.finalize();
+    });
+}
+
+/**
+ * Adds a rating to an image
+ */
+router.post('/rating:image_id/:rating_id',  checkAuth, (req, res) => {
+    const sql = 'insert into images_ratings (image_id, rating_id) values ($image_id, $rating_id);';
+    db.serialize(function () {
+        let stmt = db.prepare(sql);
+        let preparedParameter = {
+            $image_id: req.params.image_id.toString()[req.params.image_id.length-1],
+            $rating_id: req.params.rating_id.toString()[req.params.rating_id.length-1]
+        };
+        stmt.run(preparedParameter, function(err) {
+            if (err) {
+                logger.error(err);
+                res.status(401).json({message: "DB-Error occurred at inserting uploaded file"});
+                return console.log(err.message);
+            }
+
+            console.log(`A row has been inserted with rowid ${this.lastID}`);
+        });
+
+        logger.debug('Upload successfully inserted into DB');
+
+        stmt.finalize();
+        res.status(200).json({message: `File successfully uploaded`, details: 'Also stored in DB'});
+    });
+});
+/**
+ * Add an image to users_images
+ */
+router.post('/favorites:image_id',  checkAuth, (req, res) => {
+    const sql = 'insert into users_images (user_id, image_id) values ($user_id, $image_id);';
+
+    db.serialize(function () {
+        let stmt = db.prepare(sql);
+        let preparedParameter = {
+            $user_id: req.user_id,
+            $image_id: req.params.image_id.toString()[req.params.image_id.length-1]
+        };
+        stmt.run(preparedParameter, function(err) {
+            if (err) {
+                logger.error(err);
+                res.status(401).json({message: "DB-Error occurred at inserting uploaded file"});
+                return console.log(err.message);
+            }
+
+            console.log(`A row has been inserted with rowid ${this.lastID}`);
+        });
+
+        logger.debug('Upload successfully inserted into DB');
+
+        stmt.finalize();
+        res.status(200).json({message: `File successfully uploaded`, details: 'Also stored in DB'});
+    });
+});
+
 
 /**
  * Delete an image from users favorites. Only allowed to logged in users.
  * @param id: the Database-id of the image to be deleted
  *
  */
-router.delete('/image/delete/:id', checkAuth, (req, res) => {
+router.delete('/favorites:image_id', checkAuth, (req, res) => {
     let db = getDb();
-
-    let imageToDelete = req.params.id;
+    let preparedParameter = {
+        $image_id: req.params.image_id.toString()[req.params.image_id.length-1],
+        $user_id: req.user_id
+    }
 
     const sql = 'delete from users_images where user_id=$user_id and image_id=$image_id;';
 
+
     db.serialize(function () {
         let stmt = db.prepare(sql);
-        stmt.all({$user_id: req.user_id, $image_id: imageToDelete}, function (err, rows) {
+        stmt.run(preparedParameter, function(err) {
             if (err) {
                 logger.error(err);
-                res.status(401).json({message: "DB-Error, file could not be deleted"});
+                res.status(401).json({message: "DB-Error occurred at deleting file"});
                 return console.log(err.message);
             }
-            Logger.debug('Successfully deleted image from this users favorites');
+
+            console.log(`A row has been deleted`);
         });
 
+        logger.debug('Upload successfully inserted into DB');
+
         stmt.finalize();
+        res.status(200).json({message: `File successfully deleted`, details: 'Also deleted from DB'});
     });
 });
+/**
+ * get all ratings from a given image.
+ */
+router.get('/:id/rating', (req, res) => {
+    let db = getDb();
+    let imageId = req.params.id;
+    let sql = 'select rating_id ' +
+        'from images_ratings ' +
+        'where image_id = ?';
 
+    db.serialize(function () {
+        sql = db.prepare(sql);
+        let ratings = [];
+        let result = [];
+        sql.each(imageId, function (error, row) {
+            ratings.push(parseInt(row.rating_id));
+        }, function (error, count) {
+            sql.finalize();
+            let avgRating = (ratings.reduce((a,b) => a + b, 0)/ratings.length).toFixed(2);
+            result.push(avgRating);
+            res.json(JSON.stringify(result));
+            res.status(200);
+        });
+    });
+});
+/**
+ * Get all comments from image by image_id in req.para
+ */
+
+router.get('/:id/comments', (req, res) => {
+    let db = getDb();
+    let imageId = req.params.id;
+    let sql = 'select c.value, c.date ' +
+        'from comment c join images_comments ic ' +
+        'on c.id = ic.comment_id ' +
+        'where ic.image_id = ?';
+
+    db.serialize(function () {
+        sql = db.prepare(sql);
+        let comments = [];
+        sql.each(imageId, function (error, row) {
+            comments.push(row.date + ': ' + row.value);
+        }, function (error, count) {
+            sql.finalize();
+
+            res.json(JSON.stringify(comments));
+            res.status(200);
+        });
+    });
+});
 /**
  * get all tags from a given image. the image id is sent as request-parameter
  * returns a json-array with the hashtags to the client
  */
+
 router.get('/:id/t', (req, res) => {
     let db = getDb();
     let imageId = req.params.id;
