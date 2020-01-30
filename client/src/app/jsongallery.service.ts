@@ -92,7 +92,7 @@ export class JsongalleryService {
         catchError(this.handleError)
       )
       .subscribe((data: any) => {
-        this.tags = JSON.parse(data);
+        this.comments = JSON.parse(data);
       });
   }
 
