@@ -1,18 +1,4 @@
-<!--##############################################################-->
-<!--Comments in this template-file are code for debugging purposes-->
-<!--##############################################################-->
-
-
 <form [formGroup]="loginForm" #loginform>
-  <!-- this div is just for debugging purpose -->
-  <!--
-  <div id="displayFormValues">
-    Form Value: {{loginForm.value | json}}
-  </div>
-  <div id="displayFormClasses">
-    <b>Form Classes: {{loginform.className}}</b>
-  </div>
-  -->
 
   <div class="form-group">
     <label for="email"><b>Email</b></label>
@@ -26,9 +12,6 @@
     <div [hidden]="!loginForm.controls['email'].hasError('invalid')" class="alert alert-danger">
       There is no user account matching this email address! Try again.
     </div>
-    <!--
-    <b>Email Classes: {{emailField.className}}</b>
-    -->
   </div>
 
   <div class="form-group">
@@ -43,9 +26,6 @@
     <div [hidden]="!loginForm.controls['password'].hasError('invalid')" class="alert alert-danger">
       There is no user account matching this password! Try again.
     </div>
-    <!--
-    <b>Password Classes: {{passwordField.className}}</b>
-    -->
   </div>
   <button [disabled]="!loginForm.valid" class="btn btn-primary" (click)="login()">Login</button>
   <div id="loginMessage">{{loginMessage}}</div>

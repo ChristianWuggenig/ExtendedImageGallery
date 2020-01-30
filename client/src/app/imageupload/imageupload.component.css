@@ -4,9 +4,6 @@ form {
   padding-bottom: 10%;
   padding-top: 10%;
 }
-div[class*=spinner] {
-	margin: auto;
-}
 button#uploadBtn {
   float: right;
 }
