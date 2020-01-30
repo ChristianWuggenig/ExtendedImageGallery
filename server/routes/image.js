@@ -320,6 +320,9 @@ router.get('/:id/rating', (req, res) => {
         }, function (error, count) {
             sql.finalize();
             let avgRating = (ratings.reduce((a,b) => a + b, 0)/ratings.length).toFixed(2);
+            if(isNaN(avgRating)){
+                avgRating = '-';
+            }
             result.push(avgRating);
             res.json(JSON.stringify(result));
             res.status(200);

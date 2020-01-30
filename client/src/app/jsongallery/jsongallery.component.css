@@ -25,6 +25,10 @@
     display: flex;
     flex-wrap: wrap;
 }
+#comments {
+  display: flex;
+  flex-direction: row;
+}
 
 #buttons {
   margin-left: 0.5%;

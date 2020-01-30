@@ -14,7 +14,9 @@
         <span *ngFor="let tag of galleryService.tags">{{tag}} </span>
       </div>
       <h3>Comments:</h3>
-        <h4 *ngFor="let comment of galleryService.comments" >{{comment}} </h4>
+      <div id="comments" class="comments">
+        <p id="singleComment" *ngFor="let comment of galleryService.comments" >{{comment}} </p>
+      </div>
         <input #comment id="comment" class="form-control" placeholder="Write a comment">
       <form [formGroup]="commentForm">
         <button  id="btncomment" class="btn btn-primary" (click)="onComment(comment, getCurrentImgIdx()+1)">Comment</button>
