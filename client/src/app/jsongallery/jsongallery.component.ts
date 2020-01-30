@@ -5,6 +5,7 @@ import { JsongalleryService } from '../jsongallery.service';
 import { StarRatingComponent } from 'ng-starrating';
 import {FavoritesService} from '../favorites.service';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-jsongallery',
@@ -21,7 +22,7 @@ export class JsongalleryComponent implements OnInit {
   private commentForm: FormGroup;
   private comment: string;
   // tslint:disable-next-line:max-line-length
-  constructor(private http: HttpClient, public galleryService: JsongalleryService, private cookie: CookieService, private favoritesService: FavoritesService) { }
+  constructor(private http: HttpClient, public galleryService: JsongalleryService, private cookie: CookieService, private favoritesService: FavoritesService, private authService: AuthService) { }
 
   ngOnInit() {
     this.commentForm = new FormGroup({

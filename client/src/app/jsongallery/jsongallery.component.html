@@ -17,16 +17,16 @@
       <div id="comments" class="comments">
         <p id="singleComment" *ngFor="let comment of galleryService.comments" >{{comment}} </p>
       </div>
-        <input #comment id="comment" class="form-control" placeholder="Write a comment">
+        <input #comment [disabled]="!authService.isLoggedIn()" id="comment" class="form-control" [placeholder]="authService.isLoggedIn() ? 'Write a comment' : 'Login to comment'">
       <form [formGroup]="commentForm">
-        <button  id="btncomment" class="btn btn-primary" (click)="onComment(comment, getCurrentImgIdx()+1)">Comment</button>
+        <button [disabled]="!authService.isLoggedIn()" id="btncomment" class="btn btn-primary" (click)="onComment(comment, getCurrentImgIdx()+1)">Comment</button>
       </form>
 
-      <h3>Rating:</h3>
-      <star-rating value="5" totalstars="5" checkedcolor="gold" uncheckedcolor="black" size="24px" readonly="false" (rate)="onRate($event, getCurrentImgIdx()+1)"></star-rating>
+      <h3 *ngIf="authService.isLoggedIn()">Rating:</h3>
+      <star-rating *ngIf="authService.isLoggedIn()" value="5" totalstars="5" checkedcolor="gold" uncheckedcolor="black" size="24px" readonly="false" (rate)="onRate($event, getCurrentImgIdx()+1)"></star-rating>
       <h4>Average rating:</h4>
       <h1 *ngFor="let rating of galleryService.rating">{{rating}} </h1>
-      <button id="addFavBtn" mdbWavesEffect (click)="uploadImage(getCurrentImgIdx()+1)">Add to favorites</button>
+      <button *ngIf="authService.isLoggedIn()" id="addFavBtn" mdbWavesEffect (click)="uploadImage(getCurrentImgIdx()+1)">Add to favorites</button>
     </div>
   </div>
     <div id="buttons">

@@ -22,7 +22,7 @@ export class NavbarComponent implements OnInit {
     }
   }
 
-  logout(): void { // send logout request to server. Don't leave backdoor open :-)
+  logout(): void { // send logout request to server.
     this.authService.logout().then((res) => {
       this.router.navigateByUrl(`/${this.authService.config.galleryRoute}`)
         .then((rerouting_res) => {

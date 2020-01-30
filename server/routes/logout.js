@@ -27,6 +27,9 @@ function delete_JWT_from_DB(token, res) {
     });
 }
 
+/**
+ * On logout request, delete token from DB. User needs to login again to access service.
+ */
 router.delete('/', (req, res) => {
     let token = req.headers.authorization;
     logger.debug(`logout requested with token: ${token}`);

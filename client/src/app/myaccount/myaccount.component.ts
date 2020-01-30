@@ -74,8 +74,6 @@ export class MyaccountComponent implements OnInit {
         console.log('serverUpdateResponse: ', serverUpdateResponse);
         console.log(serverUpdateResponse.token);
 
-//        this.authService.createCookie(serverUpdateResponse);
-//        this.dataForm.reset();
         this.setInfo(serverUpdateResponse.message);
       })
       .catch((serverLoginError: HttpErrorResponse) => {
